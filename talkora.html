@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TALKORA — Language as a Way of Life</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Didact+Gothic&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&display=swap');
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --ink: #0e0d0b;
+  --paper: #f5f0e8;
+  --warm: #e8e0d0;
+  --gold: #b8935a;
+  --gold-light: #d4aa72;
+  --gold-dim: rgba(184,147,90,0.2);
+  --mist: rgba(245,240,232,0.06);
+  --text-dim: rgba(245,240,232,0.4);
+  --text-mid: rgba(245,240,232,0.7);
+  --text-full: #f5f0e8;
+  --mono: 'DM Mono', monospace;
+  --serif: 'Libre Baskerville', serif;
+  --sans: 'Didact Gothic', sans-serif;
+}
+
+html, body { width:100%; height:100%; overflow:hidden; background:var(--ink); }
+
+/* ── GRAIN OVERLAY ────────────────────────────────── */
+body::after {
+  content:''; position:fixed; inset:0; z-index:1000; pointer-events:none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.028; mix-blend-mode: overlay;
+}
+
+/* ── CUSTOM CURSOR ─────────────────────────────────── */
+body { cursor: none; }
+#cur { position:fixed; width:5px; height:5px; background:var(--gold); border-radius:50%;
+  pointer-events:none; z-index:9999; transform:translate(-50%,-50%);
+  mix-blend-mode:screen; transition: width .15s, height .15s; }
+#cur-r { position:fixed; width:36px; height:36px; border:1px solid rgba(184,147,90,0.35);
+  border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); }
+body.hovering #cur { width:10px; height:10px; }
+body.hovering #cur-r { width:50px; height:50px; border-color:rgba(184,147,90,0.6); }
+
+/* ── CANVAS ────────────────────────────────────────── */
+#c { position:fixed; inset:0; z-index:0; }
+
+/* ── LOADER ─────────────────────────────────────────── */
+#loader {
+  position:fixed; inset:0; z-index:500; background:var(--ink);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2.5rem;
+  transition:opacity 1.2s ease, visibility 1.2s;
+}
+#loader.out { opacity:0; visibility:hidden; }
+.l-logo { font-family:var(--mono); font-size:.65rem; letter-spacing:.6em; color:var(--gold); text-transform:uppercase; }
+.l-track { width:160px; height:1px; background:rgba(255,255,255,.08); }
+.l-fill { height:100%; background:var(--gold); width:0; transition:width .08s linear; }
+.l-num { font-family:var(--mono); font-size:.55rem; color:var(--text-dim); letter-spacing:.2em; }
+
+/* ── SHELL ───────────────────────────────────────────── */
+#shell { position:fixed; inset:0; z-index:10; pointer-events:none; font-family:var(--sans); }
+
+/* ── NAV ─────────────────────────────────────────────── */
+#nav {
+  position:absolute; top:0; left:0; right:0;
+  display:grid; grid-template-columns:1fr auto 1fr; align-items:center;
+  padding:2.4rem 4rem;
+  opacity:0; animation:rise .8s 1.2s cubic-bezier(.22,1,.36,1) forwards;
+  border-bottom:1px solid rgba(184,147,90,.06);
+}
+.n-logo {
+  font-family:var(--mono); font-size:.75rem; letter-spacing:.6em;
+  color:var(--gold); text-transform:uppercase;
+  grid-column:2; text-align:center;
+}
+.n-links { display:flex; gap:3rem; grid-column:3; justify-content:flex-end; align-items:center; }
+.n-link {
+  font-family:var(--mono); font-size:.58rem; letter-spacing:.28em;
+  text-transform:uppercase; color:var(--text-mid); pointer-events:all;
+  cursor:none; position:relative; transition:color .3s;
+}
+.n-link::after {
+  content:''; position:absolute; bottom:-4px; left:0; right:0; height:1px;
+  background:var(--gold); transform:scaleX(0); transform-origin:left;
+  transition:transform .4s cubic-bezier(.22,1,.36,1);
+}
+.n-link:hover { color:var(--gold); }
+.n-link:hover::after { transform:scaleX(1); }
+/* Left side nav slot — language indicators */
+.n-langs {
+  grid-column:1; display:flex; gap:1.2rem; align-items:center;
+  font-family:var(--mono); font-size:.5rem; letter-spacing:.2em;
+  color:var(--text-dim); text-transform:uppercase;
+}
+.n-lang-dot { width:4px; height:4px; border-radius:50%; background:var(--gold-dim); }
+
+/* ── HERO ─────────────────────────────────────────────── */
+#hero {
+  position:absolute; top:50%; left:50%;
+  text-align:center; width:min(860px,80vw);
+  opacity:0; animation:heroRise 1.2s 1.8s cubic-bezier(.16,1,.3,1) forwards;
+}
+@keyframes heroRise {
+  from { opacity:0; transform:translate(-50%, calc(-50% + 22px)); }
+  to   { opacity:1; transform:translate(-50%, -50%); }
+}
+.h-sup {
+  font-family:var(--mono); font-size:.62rem; letter-spacing:.55em;
+  color:var(--gold); text-transform:uppercase; margin-bottom:2.5rem;
+  display:flex; align-items:center; justify-content:center; gap:2rem;
+}
+.h-sup::before, .h-sup::after {
+  content:''; flex:1; max-width:80px; height:1px; background:var(--gold-dim);
+}
+.h-title {
+  font-family:var(--serif); font-weight:400; line-height:.88;
+  font-size:clamp(4rem, 7.5vw, 7.5rem);
+  color:var(--text-full); letter-spacing:-.03em;
+}
+.h-title em { font-style:italic; color:var(--gold-light); }
+.h-body {
+  margin-top:2.8rem; font-family:var(--mono); font-size:.62rem;
+  letter-spacing:.18em; color:var(--text-mid); line-height:2.2;
+  text-transform:uppercase;
+}
+.h-divider {
+  width:40px; height:1px; background:var(--gold-dim);
+  margin:2rem auto 0;
+}
+.h-actions {
+  margin-top:2.5rem; display:flex; align-items:center; justify-content:center; gap:1.5rem;
+  pointer-events:all;
+}
+.btn-primary {
+  font-family:var(--mono); font-size:.6rem; letter-spacing:.35em; text-transform:uppercase;
+  background:var(--gold); color:var(--ink); border:none; padding:1rem 3rem;
+  cursor:none; transition:background .3s, transform .3s, box-shadow .3s;
+}
+.btn-primary:hover { background:var(--gold-light); transform:translateY(-2px); box-shadow:0 8px 30px rgba(184,147,90,.2); }
+.btn-ghost {
+  font-family:var(--mono); font-size:.6rem; letter-spacing:.35em; text-transform:uppercase;
+  background:transparent; color:var(--text-mid); border:1px solid rgba(245,240,232,.12);
+  padding:1rem 3rem; cursor:none; transition:border-color .3s, color .3s;
+}
+.btn-ghost:hover { border-color:rgba(184,147,90,.4); color:var(--gold); }
+
+/* ── CORNER COORDINATES ─────────────────────────────── */
+.corner {
+  position:absolute; font-family:var(--mono); font-size:.48rem;
+  letter-spacing:.2em; color:rgba(245,240,232,.18); text-transform:uppercase;
+  opacity:0; animation:rise .8s 3.2s cubic-bezier(.22,1,.36,1) forwards;
+}
+.corner.tl { top:6rem; left:4rem; }
+.corner.tr { top:6rem; right:4rem; text-align:right; }
+.corner.bl { bottom:5rem; left:4rem; }
+.corner.br { bottom:5rem; right:4rem; text-align:right; }
+
+/* ── FLOATING GLYPHS ─────────────────────────────────── */
+.glyph {
+  position:absolute; pointer-events:none;
+  font-family:var(--serif); color:rgba(184,147,90,0.10);
+  animation:glyphFloat linear both;
+  user-select:none; font-style:italic;
+}
+@keyframes glyphFloat {
+  0%   { opacity:0; transform:translateY(24px); }
+  12%  { opacity:1; }
+  88%  { opacity:1; }
+  100% { opacity:0; transform:translateY(-24px); }
+}
+
+/* ── STATUS BAR ──────────────────────────────────────── */
+#status {
+  position:absolute; bottom:0; left:0; right:0;
+  display:flex; justify-content:space-between; align-items:flex-end;
+  padding:2.2rem 4rem;
+  opacity:0; animation:rise .8s 2.8s cubic-bezier(.22,1,.36,1) forwards;
+  border-top:1px solid rgba(184,147,90,.06);
+}
+.stat { display:flex; flex-direction:column; gap:.5rem; }
+.stat-n {
+  font-family:var(--serif); font-style:italic; font-size:2.4rem;
+  color:var(--gold); line-height:1;
+}
+.stat-l {
+  font-family:var(--mono); font-size:.48rem; letter-spacing:.35em;
+  text-transform:uppercase; color:var(--text-dim);
+}
+/* Center stat special styling */
+.stat.center { text-align:center; }
+.stat.center .stat-n {
+  font-size:.9rem; font-style:normal; font-family:var(--mono);
+  letter-spacing:.08em; line-height:1.8;
+}
+
+/* ── VERTICAL EDGE TEXTS ─────────────────────────────── */
+.edge {
+  position:absolute; top:50%; transform:translateY(-50%);
+  font-family:var(--mono); font-size:.48rem; letter-spacing:.45em;
+  text-transform:uppercase; color:rgba(245,240,232,.25); white-space:nowrap;
+  writing-mode:vertical-lr;
+  opacity:0; animation:rise .8s 3s cubic-bezier(.22,1,.36,1) forwards;
+}
+.edge.l { left:4rem; }
+.edge.r { right:4rem; transform:translateY(-50%) rotate(180deg); }
+
+/* ── HORIZONTAL RULES (desktop atmosphere lines) ───── */
+.atm-line {
+  position:absolute; left:4rem; right:4rem; height:1px;
+  background:linear-gradient(to right, transparent, rgba(184,147,90,.12), transparent);
+  opacity:0; animation:rise .8s 3.5s cubic-bezier(.22,1,.36,1) forwards;
+}
+.atm-line.top { top:5.5rem; }
+.atm-line.bot { bottom:4.5rem; }
+
+/* ── CHATBOT TRIGGER ──────────────────────────────────── */
+#chat-btn {
+  position:absolute; bottom:2.2rem; right:3.5rem; pointer-events:all;
+  width:54px; height:54px; border:1px solid var(--gold-dim);
+  background:rgba(14,13,11,.7); backdrop-filter:blur(12px);
+  cursor:none; display:flex; align-items:center; justify-content:center;
+  transition:border-color .3s, background .3s;
+  opacity:0; animation:rise .8s 3.2s cubic-bezier(.22,1,.36,1) forwards;
+}
+#chat-btn:hover { border-color:var(--gold); background:rgba(184,147,90,.1); }
+#chat-btn svg { width:20px; height:20px; stroke:var(--gold); fill:none; stroke-width:1.5; }
+.chat-pulse {
+  position:absolute; top:10px; right:10px;
+  width:6px; height:6px; border-radius:50%; background:var(--gold);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:.4; transform:scale(1.4); }
+}
+
+/* ── CHAT PANEL ───────────────────────────────────────── */
+#chat {
+  position:absolute; bottom:5rem; right:3.5rem;
+  width:min(440px,90vw); height:min(580px,80vh);
+  background:rgba(10,9,8,.92); backdrop-filter:blur(24px);
+  border:1px solid rgba(184,147,90,.2);
+  display:flex; flex-direction:column;
+  opacity:0; visibility:hidden; pointer-events:none;
+  transform:translateY(20px);
+  transition:all .5s cubic-bezier(.22,1,.36,1);
+}
+#chat.open {
+  opacity:1; visibility:visible; pointer-events:all;
+  transform:translateY(0);
+}
+.chat-head {
+  padding:1.4rem 1.8rem; border-bottom:1px solid rgba(184,147,90,.12);
+  display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
+}
+.chat-head-l { display:flex; flex-direction:column; gap:.3rem; }
+.chat-title { font-family:var(--serif); font-style:italic; font-size:1rem; color:var(--gold-light); }
+.chat-sub { font-family:var(--mono); font-size:.5rem; letter-spacing:.25em; text-transform:uppercase; color:var(--text-dim); }
+.chat-close {
+  width:28px; height:28px; border:1px solid rgba(184,147,90,.2);
+  background:transparent; cursor:none; display:flex; align-items:center; justify-content:center;
+  transition:border-color .3s; color:var(--text-dim); font-size:.8rem; font-family:var(--mono);
+}
+.chat-close:hover { border-color:var(--gold); color:var(--gold); }
+
+.chat-msgs {
+  flex:1; overflow-y:auto; padding:1.5rem 1.8rem;
+  display:flex; flex-direction:column; gap:1.2rem;
+  scrollbar-width:thin; scrollbar-color:rgba(184,147,90,.2) transparent;
+}
+.chat-msgs::-webkit-scrollbar { width:2px; }
+.chat-msgs::-webkit-scrollbar-thumb { background:rgba(184,147,90,.25); }
+
+.msg { display:flex; flex-direction:column; gap:.4rem; max-width:86%; }
+.msg.bot { align-self:flex-start; }
+.msg.user { align-self:flex-end; }
+.msg-role {
+  font-family:var(--mono); font-size:.45rem; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--text-dim); padding:0 .2rem;
+}
+.msg.user .msg-role { text-align:right; }
+.msg-body {
+  font-family:var(--serif); font-size:.8rem; line-height:1.75;
+  color:var(--text-mid); padding:.85rem 1.1rem;
+  border:1px solid rgba(184,147,90,.1);
+}
+.msg.bot .msg-body { background:rgba(184,147,90,.04); border-color:rgba(184,147,90,.12); }
+.msg.user .msg-body { background:rgba(184,147,90,.08); border-color:rgba(184,147,90,.2); color:var(--text-full); }
+
+/* Typing indicator */
+.typing-dots { display:flex; gap:.3rem; align-items:center; padding:.85rem 1.1rem;
+  border:1px solid rgba(184,147,90,.12); background:rgba(184,147,90,.04);
+  width:fit-content; }
+.typing-dots span {
+  width:4px; height:4px; border-radius:50%; background:var(--gold);
+  animation:dot .9s ease-in-out infinite;
+}
+.typing-dots span:nth-child(2) { animation-delay:.18s; }
+.typing-dots span:nth-child(3) { animation-delay:.36s; }
+@keyframes dot { 0%,80%,100% { opacity:.2; transform:scale(.8); } 40% { opacity:1; transform:scale(1); } }
+
+.chat-foot {
+  padding:1.2rem 1.8rem; border-top:1px solid rgba(184,147,90,.12);
+  display:flex; gap:.8rem; align-items:flex-end; flex-shrink:0;
+}
+#chat-input {
+  flex:1; background:transparent; border:none; border-bottom:1px solid rgba(184,147,90,.2);
+  color:var(--text-full); font-family:var(--serif); font-size:.85rem; padding:.5rem 0;
+  outline:none; resize:none; max-height:80px; line-height:1.5;
+  transition:border-color .3s;
+}
+#chat-input::placeholder { color:var(--text-dim); font-style:italic; }
+#chat-input:focus { border-color:rgba(184,147,90,.5); }
+#send-btn {
+  width:36px; height:36px; border:1px solid rgba(184,147,90,.25); background:transparent;
+  cursor:none; display:flex; align-items:center; justify-content:center;
+  transition:background .3s, border-color .3s; flex-shrink:0;
+  color:var(--gold);
+}
+#send-btn:hover { background:rgba(184,147,90,.1); border-color:var(--gold); }
+#send-btn svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2; }
+
+/* ── QUICK PROMPTS ────────────────────────────────────── */
+.quick-wrap { padding:.8rem 1.8rem 0; display:flex; flex-wrap:wrap; gap:.5rem; flex-shrink:0; }
+.quick {
+  font-family:var(--mono); font-size:.48rem; letter-spacing:.15em; text-transform:uppercase;
+  border:1px solid rgba(184,147,90,.15); color:var(--text-dim);
+  padding:.4rem .75rem; cursor:none; background:transparent;
+  transition:all .25s;
+}
+.quick:hover { border-color:var(--gold-dim); color:var(--gold); }
+
+/* ── SECTION PANELS (scroll sections) ──────────────────── */
+#sections {
+  position:absolute; inset:0; pointer-events:none; z-index:5;
+}
+
+/* ── ANIMS ─────────────────────────────────────────────── */
+@keyframes rise {
+  from { opacity:0; transform:translateY(18px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE — TABLET  (≤ 900px)
+══════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  #nav { padding: 1.8rem 2rem; }
+
+  .n-links { gap: 1.5rem; }
+  .n-link { font-size: .5rem; letter-spacing: .18em; }
+
+  .edge { display: none; }
+
+  #status {
+    padding: 1.5rem 2rem;
+    flex-wrap: wrap; gap: .8rem 1.5rem;
+    justify-content: center;
+  }
+  .stat { align-items: center; text-align: center; }
+  .stat-n { font-size: 1.5rem; }
+
+  .corner { font-size: .4rem; letter-spacing: .1em; }
+  .n-langs { gap: .6rem; font-size: .42rem; }
+  .h-body { font-size: .58rem; }
+  .h-actions { gap: 1rem; }
+  .btn-primary, .btn-ghost { padding: .8rem 1.8rem; font-size: .55rem; }
+
+  #chat { right: 1.5rem; bottom: 5rem; width: min(400px, calc(100vw - 3rem)); }
+  #chat-btn { right: 1.5rem; bottom: 1.5rem; }
+}
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE — MOBILE  (≤ 600px)
+══════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  /* Restore default cursor on touch devices */
+  body { cursor: auto; }
+  #cur, #cur-r { display: none; }
+
+  /* Nav: logo only, hide links */
+  #nav {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    padding: 1.5rem 1.2rem;
+  }
+  .n-logo { grid-column: 1; }
+  .n-links { display: none; }
+
+  /* Hero */
+  #hero { width: 92vw; }
+  .h-sup { font-size: .5rem; letter-spacing: .3em; margin-bottom: 1.2rem; }
+  .h-title { font-size: clamp(2.8rem, 14vw, 4.5rem); line-height: .95; }
+  .h-body { font-size: .52rem; letter-spacing: .08em; margin-top: 1.5rem; }
+  .h-actions {
+    flex-direction: column; gap: .8rem; margin-top: 2rem;
+  }
+  .btn-primary, .btn-ghost {
+    width: 100%; text-align: center;
+    padding: 1rem 1.5rem; font-size: .58rem;
+    cursor: auto;
+  }
+
+  /* Stats bar — compact 2-col grid */
+  #status {
+    padding: 1rem 1.2rem 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .8rem 1rem;
+    justify-items: center;
+  }
+  /* hide the middle glyph stat on very small screens */
+  #status .stat:nth-child(3) { display: none; }
+  .stat-n { font-size: 1.3rem; }
+  .stat-l { font-size: .42rem; }
+
+  /* Chat panel — full width, anchored at bottom */
+  #chat {
+    right: 0; left: 0; bottom: 0;
+    width: 100%; border-left: none; border-right: none; border-bottom: none;
+    height: min(520px, 85vh);
+    border-radius: 0;
+  }
+  #chat-btn {
+    right: 1.2rem; bottom: 1.2rem;
+    width: 48px; height: 48px;
+    cursor: auto;
+  }
+  .quick-wrap { padding: .6rem 1.2rem 0; }
+  .quick { font-size: .44rem; padding: .35rem .6rem; cursor: auto; }
+  .chat-head { padding: 1rem 1.2rem; }
+  .chat-msgs { padding: 1rem 1.2rem; }
+  .chat-foot { padding: 1rem 1.2rem; }
+  #chat-input { font-size: .8rem; }
+  #send-btn { cursor: auto; }
+  .chat-close { cursor: auto; }
+
+  /* Reduce glyph font sizes on mobile */
+  .glyph { font-size: clamp(.8rem, 4vw, 2rem) !important; }
+
+  /* Hide desktop-only details */
+  .corner, .atm-line, .n-langs { display: none; }
+}
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE — TINY  (≤ 380px)
+══════════════════════════════════════════════════════ */
+@media (max-width: 380px) {
+  .h-title { font-size: clamp(2.4rem, 16vw, 3rem); }
+  .h-sup { display: none; }
+  #status { grid-template-columns: 1fr 1fr; }
+}
+
+/* ══════════════════════════════════════════════════════
+   TALL SCREENS / LANDSCAPE FIX
+══════════════════════════════════════════════════════ */
+@media (max-height: 600px) and (orientation: landscape) {
+  .h-title { font-size: clamp(2rem, 8vh, 4rem); }
+  .h-body { margin-top: 1rem; }
+  .h-actions { margin-top: 1.2rem; }
+  #status { display: none; }
+  .edge { display: none; }
+  #chat { height: 90vh; bottom: 4rem; }
+}
+
+/* ══════════════════════════════════════════════════════
+   GAMES OVERLAY
+══════════════════════════════════════════════════════ */
+#games-overlay {
+  position:fixed; inset:0; z-index:200;
+  background:rgba(8,7,6,.85); backdrop-filter:blur(20px);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .5s cubic-bezier(.22,1,.36,1), visibility .5s;
+}
+#games-overlay.open {
+  opacity:1; visibility:visible; pointer-events:all;
+}
+#games-panel {
+  width:min(760px,96vw); max-height:92vh;
+  background:rgba(12,11,9,.97); border:1px solid rgba(184,147,90,.18);
+  display:flex; flex-direction:column; overflow:hidden;
+  transform:translateY(30px);
+  transition:transform .5s cubic-bezier(.22,1,.36,1);
+}
+#games-overlay.open #games-panel { transform:translateY(0); }
+
+.gp-header {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:1.5rem 2rem; border-bottom:1px solid rgba(184,147,90,.1); flex-shrink:0;
+}
+.gp-title { font-family:var(--serif); font-style:italic; font-size:1.3rem; color:var(--gold-light); }
+.gp-sub { font-family:var(--mono); font-size:.48rem; letter-spacing:.3em; text-transform:uppercase; color:var(--text-dim); margin-top:.3rem; }
+#games-close {
+  width:30px; height:30px; border:1px solid rgba(184,147,90,.2); background:transparent;
+  color:var(--text-dim); font-family:var(--mono); font-size:.75rem; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:all .2s;
+}
+#games-close:hover { border-color:var(--gold); color:var(--gold); }
+
+.game-tabs {
+  display:flex; border-bottom:1px solid rgba(184,147,90,.1); flex-shrink:0;
+}
+.g-tab {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  padding:1rem .5rem; gap:.25rem; background:transparent;
+  border:none; border-right:1px solid rgba(184,147,90,.08);
+  cursor:pointer; transition:background .3s; position:relative;
+}
+.g-tab:last-child { border-right:none; }
+.g-tab::after {
+  content:''; position:absolute; bottom:0; left:0; right:0; height:2px;
+  background:var(--gold); transform:scaleX(0); transition:transform .3s cubic-bezier(.22,1,.36,1);
+}
+.g-tab.active { background:rgba(184,147,90,.06); }
+.g-tab.active::after { transform:scaleX(1); }
+.g-icon { font-size:1.2rem; line-height:1; }
+.g-name { font-family:var(--mono); font-size:.55rem; letter-spacing:.2em; text-transform:uppercase; color:var(--text-full); }
+.g-desc { font-family:var(--mono); font-size:.42rem; letter-spacing:.1em; text-transform:uppercase; color:var(--text-dim); }
+
+.game-arena { flex:1; overflow-y:auto; scrollbar-width:thin; scrollbar-color:rgba(184,147,90,.2) transparent; }
+.game-screen { display:none; flex-direction:column; padding:1.5rem 2rem; gap:1.2rem; }
+.game-screen.active { display:flex; }
+
+.game-lang-bar {
+  display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;
+}
+.glang-sel {
+  font-family:var(--mono); font-size:.55rem; letter-spacing:.15em;
+  background:transparent; border:1px solid rgba(184,147,90,.2);
+  color:var(--text-full); padding:.45rem .9rem; cursor:pointer; outline:none;
+  transition:border-color .2s;
+}
+.glang-sel:focus { border-color:var(--gold); }
+.glang-sel option { background:#0e0d0b; }
+
+.racer-stats { display:flex; gap:1.2rem; margin-left:auto; }
+.rs-item { display:flex; flex-direction:column; align-items:center; gap:.15rem; }
+.rs-val { font-family:var(--serif); font-style:italic; font-size:1.3rem; color:var(--gold); line-height:1; }
+.rs-lab { font-family:var(--mono); font-size:.42rem; letter-spacing:.3em; text-transform:uppercase; color:var(--text-dim); }
+
+/* TYPE RACER */
+.racer-area {
+  border:1px solid rgba(184,147,90,.12); padding:1.5rem; background:rgba(184,147,90,.02);
+  display:flex; flex-direction:column; gap:.8rem;
+}
+.racer-translation {
+  font-family:var(--mono); font-size:.55rem; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--text-dim);
+}
+.racer-phrase {
+  font-family:var(--serif); font-size:1.3rem; line-height:1.6;
+  color:var(--text-mid); min-height:2.5rem; word-break:break-word;
+}
+.racer-phrase .correct { color:var(--gold); }
+.racer-phrase .wrong { color:#c0392b; text-decoration:underline; }
+.racer-phrase .cursor { border-left:2px solid var(--gold-light); animation:blink .7s step-end infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.racer-prog-track { height:2px; background:rgba(255,255,255,.06); }
+#racer-prog { height:100%; background:var(--gold); width:0; transition:width .2s; }
+.racer-input {
+  width:100%; background:transparent; border:1px solid rgba(184,147,90,.2);
+  color:var(--text-full); font-family:var(--serif); font-size:.95rem;
+  padding:.8rem 1rem; outline:none; resize:none; height:56px;
+  transition:border-color .2s; line-height:1.5;
+}
+.racer-input:focus { border-color:rgba(184,147,90,.5); }
+.racer-input:disabled { opacity:.4; }
+
+.game-btn {
+  align-self:flex-start; font-family:var(--mono); font-size:.55rem;
+  letter-spacing:.3em; text-transform:uppercase;
+  background:var(--gold); color:var(--ink); border:none;
+  padding:.75rem 2rem; cursor:pointer; transition:background .2s, transform .2s;
+}
+.game-btn:hover { background:var(--gold-light); transform:translateY(-1px); }
+.game-result {
+  font-family:var(--serif); font-style:italic; font-size:1rem;
+  color:var(--gold-light); text-align:center; padding:.5rem;
+}
+
+/* WORD FLASH */
+.flash-card-wrap {
+  display:flex; flex-direction:column; gap:.6rem;
+}
+.flash-card {
+  border:1px solid rgba(184,147,90,.2); background:rgba(184,147,90,.03);
+  padding:2rem 1.5rem; text-align:center; min-height:110px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.5rem;
+}
+.flash-word {
+  font-family:var(--serif); font-size:2rem; font-style:italic;
+  color:var(--text-full); line-height:1;
+}
+.flash-hint {
+  font-family:var(--mono); font-size:.48rem; letter-spacing:.25em;
+  text-transform:uppercase; color:var(--text-dim);
+}
+.flash-timer-track { height:2px; background:rgba(255,255,255,.06); }
+#flash-timer-fill { height:100%; background:var(--gold); width:100%; transition:width linear; }
+.flash-choices {
+  display:grid; grid-template-columns:1fr 1fr; gap:.6rem;
+}
+.flash-choice {
+  font-family:var(--mono); font-size:.58rem; letter-spacing:.1em;
+  border:1px solid rgba(184,147,90,.18); background:transparent;
+  color:var(--text-mid); padding:.8rem 1rem; cursor:pointer;
+  text-align:left; transition:all .2s; line-height:1.4;
+}
+.flash-choice:hover { border-color:rgba(184,147,90,.5); color:var(--text-full); background:rgba(184,147,90,.05); }
+.flash-choice.correct { border-color:var(--gold); background:rgba(184,147,90,.12); color:var(--gold); }
+.flash-choice.wrong { border-color:#c0392b; background:rgba(192,57,43,.08); color:#e74c3c; }
+
+/* GLYPH MATCH */
+.glyph-question {
+  display:flex; flex-direction:column; align-items:center; gap:.8rem;
+  border:1px solid rgba(184,147,90,.12); background:rgba(184,147,90,.02);
+  padding:2rem 1rem;
+}
+.glyph-char {
+  font-size:4rem; line-height:1; color:var(--gold-light);
+  font-family:var(--serif); transition:transform .3s;
+}
+.glyph-char.pop { animation:glyphPop .35s ease; }
+@keyframes glyphPop { 0%{transform:scale(1)} 50%{transform:scale(1.2)} 100%{transform:scale(1)} }
+.glyph-prompt { font-family:var(--mono); font-size:.5rem; letter-spacing:.25em; text-transform:uppercase; color:var(--text-dim); }
+.glyph-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:.6rem; }
+.glyph-opt {
+  font-family:var(--mono); font-size:.65rem; letter-spacing:.1em;
+  border:1px solid rgba(184,147,90,.18); background:transparent;
+  color:var(--text-mid); padding:.9rem 1rem; cursor:pointer;
+  text-align:center; transition:all .2s;
+}
+.glyph-opt:hover { border-color:rgba(184,147,90,.5); color:var(--text-full); background:rgba(184,147,90,.05); }
+.glyph-opt.correct { border-color:var(--gold); background:rgba(184,147,90,.15); color:var(--gold); }
+.glyph-opt.wrong { border-color:#c0392b; background:rgba(192,57,43,.08); color:#e74c3c; }
+
+/* Games responsive */
+@media (max-width:600px) {
+  #games-panel { max-height:100vh; border-left:none; border-right:none; border-bottom:none; }
+  .gp-header { padding:1rem 1.2rem; }
+  .game-screen { padding:1rem 1.2rem; }
+  .flash-choices { grid-template-columns:1fr; }
+  .glyph-grid { grid-template-columns:repeat(2,1fr); }
+  .g-tab { padding:.8rem .3rem; }
+  .g-desc { display:none; }
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-r"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="l-logo">Talkora</div>
+  <div class="l-track"><div class="l-fill" id="lfill"></div></div>
+  <div class="l-num" id="lnum">0%</div>
+</div>
+
+<!-- THREE.JS CANVAS -->
+<canvas id="c"></canvas>
+
+<!-- UI SHELL -->
+<div id="shell">
+
+  <!-- NAV -->
+  <nav id="nav">
+    <div class="n-langs">
+      <div class="n-lang-dot"></div>
+      <span>ES</span>
+      <div class="n-lang-dot"></div>
+      <span>FR</span>
+      <div class="n-lang-dot"></div>
+      <span>JA</span>
+      <div class="n-lang-dot"></div>
+      <span>AR</span>
+    </div>
+    <div class="n-logo">Talkora</div>
+    <div class="n-links">
+      <div class="n-link">Languages</div>
+      <div class="n-link">Method</div>
+      <div class="n-link" id="nav-games">Play</div>
+      <div class="n-link">Join</div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div id="hero">
+    <div class="h-sup">Language as a Way of Life</div>
+    <h1 class="h-title">
+      Live<br><em>Through</em><br>Language
+    </h1>
+    <p class="h-body">Daily routines · Cultural immersion · Real conversations</p>
+    <div class="h-divider"></div>
+    <div class="h-actions">
+      <button class="btn-primary" id="start-btn">Begin Your Journey</button>
+      <button class="btn-ghost">Explore Method</button>
+    </div>
+  </div>
+
+  <!-- EDGE TEXTS -->
+  <div class="edge l">Japanese · Arabic · French · Mandarin · Spanish · Portuguese</div>
+  <div class="edge r">Morning · Afternoon · Evening · Night · Every Moment</div>
+
+  <!-- CORNER COORDS -->
+  <div class="corner tl">36.7749° N · 119.4194° W</div>
+  <div class="corner tr">EST · 2024 · v1.0</div>
+  <div class="corner bl">47 Languages · Active</div>
+  <div class="corner br">Session · Ongoing</div>
+
+  <!-- ATMOSPHERE LINES -->
+  <div class="atm-line top"></div>
+  <div class="atm-line bot"></div>
+
+  <!-- STATS -->
+  <div id="status">
+    <div class="stat">
+      <div class="stat-n">47</div>
+      <div class="stat-l">Languages</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">3.1M</div>
+      <div class="stat-l">Learners</div>
+    </div>
+    <div class="stat center">
+      <div class="stat-n">語 · مرحبا · Bonjour</div>
+      <div class="stat-l">Every script · Every world</div>
+    </div>
+    <div class="stat" style="text-align:right">
+      <div class="stat-n">96%</div>
+      <div class="stat-l">Fluency Rate</div>
+    </div>
+    <div class="stat" style="text-align:right">
+      <div class="stat-n">180</div>
+      <div class="stat-l">Countries</div>
+    </div>
+  </div>
+
+  <!-- CHAT BUTTON -->
+  <button id="chat-btn" aria-label="Open assistant">
+    <div class="chat-pulse"></div>
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+  </button>
+
+  <!-- CHAT PANEL -->
+  <div id="chat">
+    <div class="chat-head">
+      <div class="chat-head-l">
+        <div class="chat-title">Talkora Assistant</div>
+        <div class="chat-sub">Your daily learning companion</div>
+      </div>
+      <button class="chat-close" id="chat-close">✕</button>
+    </div>
+
+    <div class="quick-wrap">
+      <button class="quick" data-q="What's a good morning routine to practice Spanish?">Morning routine</button>
+      <button class="quick" data-q="Give me a lunch break activity to practice French vocabulary.">Lunch activity</button>
+      <button class="quick" data-q="How can I wind down at night while still learning Japanese?">Evening wind-down</button>
+      <button class="quick" data-q="I have 10 minutes — what's the best micro-practice for Arabic?">10-min micro practice</button>
+    </div>
+
+    <div class="chat-msgs" id="msgs">
+      <div class="msg bot">
+        <div class="msg-role">Talkora</div>
+        <div class="msg-body">Bienvenido. I'm here to weave your language learning into every corner of your day — mornings, commutes, meals, and quiet evenings. What shall we explore?</div>
+      </div>
+    </div>
+
+    <div class="chat-foot">
+      <textarea id="chat-input" rows="1" placeholder="Ask about routines, activities, tips…"></textarea>
+      <button id="send-btn">
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+
+
+  <!-- GAMES OVERLAY -->
+  <div id="games-overlay">
+    <div id="games-panel">
+      <div class="gp-header">
+        <div class="gp-header-l">
+          <div class="gp-title">Play &amp; Learn</div>
+          <div class="gp-sub">Three games &middot; Infinite languages</div>
+        </div>
+        <button id="games-close">&#10005;</button>
+      </div>
+      <div class="game-tabs">
+        <button class="g-tab active" data-game="racer"><span class="g-icon">&#9000;</span><span class="g-name">Type Racer</span><span class="g-desc">Race the phrase</span></button>
+        <button class="g-tab" data-game="flash"><span class="g-icon">&#9889;</span><span class="g-name">Word Flash</span><span class="g-desc">Flashcard duel</span></button>
+        <button class="g-tab" data-game="glyph"><span class="g-icon">&#23383;</span><span class="g-name">Glyph Match</span><span class="g-desc">Match the script</span></button>
+      </div>
+      <div class="game-arena">
+        <div class="game-screen active" id="game-racer">
+          <div class="game-lang-bar">
+            <select class="glang-sel" id="racer-lang">
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+              <option value="ja">Japanese</option>
+              <option value="ar">Arabic</option>
+              <option value="de">German</option>
+              <option value="it">Italian</option>
+            </select>
+            <div class="racer-stats">
+              <span class="rs-item"><span class="rs-val" id="racer-wpm">&#8211;</span><span class="rs-lab">WPM</span></span>
+              <span class="rs-item"><span class="rs-val" id="racer-acc">&#8211;</span><span class="rs-lab">ACC</span></span>
+              <span class="rs-item"><span class="rs-val" id="racer-score">0</span><span class="rs-lab">PTS</span></span>
+            </div>
+          </div>
+          <div class="racer-area">
+            <div class="racer-translation" id="racer-translation">Select a language and begin</div>
+            <div class="racer-phrase" id="racer-phrase"><em>Your phrase will appear here</em></div>
+            <div class="racer-prog-track"><div id="racer-prog"></div></div>
+          </div>
+          <textarea class="racer-input" id="racer-input" placeholder="Start typing here..." disabled spellcheck="false" autocomplete="off"></textarea>
+          <button class="game-btn" id="racer-start">Begin Race</button>
+        </div>
+        <div class="game-screen" id="game-flash">
+          <div class="game-lang-bar">
+            <select class="glang-sel" id="flash-lang">
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+              <option value="ja">Japanese</option>
+              <option value="ar">Arabic</option>
+              <option value="de">German</option>
+              <option value="it">Italian</option>
+            </select>
+            <div class="racer-stats">
+              <span class="rs-item"><span class="rs-val" id="flash-score">0</span><span class="rs-lab">SCORE</span></span>
+              <span class="rs-item"><span class="rs-val" id="flash-streak">0</span><span class="rs-lab">STREAK</span></span>
+            </div>
+          </div>
+          <div class="flash-card-wrap">
+            <div class="flash-card" id="flash-card">
+              <div class="flash-word" id="flash-word">Press Start</div>
+              <div class="flash-hint">What does this mean?</div>
+            </div>
+            <div class="flash-timer-track"><div id="flash-timer-fill"></div></div>
+          </div>
+          <div class="flash-choices" id="flash-choices"></div>
+          <button class="game-btn" id="flash-start">Begin Flash</button>
+        </div>
+        <div class="game-screen" id="game-glyph">
+          <div class="game-lang-bar">
+            <select class="glang-sel" id="glyph-lang">
+              <option value="ja">Hiragana</option>
+              <option value="ar">Arabic</option>
+              <option value="zh">Chinese</option>
+              <option value="gr">Greek</option>
+            </select>
+            <div class="racer-stats">
+              <span class="rs-item"><span class="rs-val" id="glyph-score">0</span><span class="rs-lab">SCORE</span></span>
+              <span class="rs-item"><span class="rs-val" id="glyph-lives">&#9825;&#9825;&#9825;</span><span class="rs-lab">LIVES</span></span>
+            </div>
+          </div>
+          <div class="glyph-question">
+            <div class="glyph-char" id="glyph-char">?</div>
+            <div class="glyph-prompt" id="glyph-prompt">Choose the correct romanization</div>
+          </div>
+          <div class="glyph-grid" id="glyph-grid"></div>
+          <button class="game-btn" id="glyph-start">Begin Match</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /shell -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════
+   CURSOR
+═══════════════════════════════════════════════════ */
+const cur = document.getElementById('cur');
+const curR = document.getElementById('cur-r');
+let mx=innerWidth/2, my=innerHeight/2, rx=mx, ry=my;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cur.style.left = mx+'px'; cur.style.top = my+'px';
+});
+document.querySelectorAll('button,.n-link').forEach(el => {
+  el.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
+});
+(function animCursor(){
+  rx += (mx-rx)*.1; ry += (my-ry)*.1;
+  curR.style.left = rx+'px'; curR.style.top = ry+'px';
+  requestAnimationFrame(animCursor);
+})();
+
+/* ═══════════════════════════════════════════════════
+   LOADER
+═══════════════════════════════════════════════════ */
+let prog = 0;
+const fill = document.getElementById('lfill');
+const lnum = document.getElementById('lnum');
+const loaderEl = document.getElementById('loader');
+const loadInt = setInterval(()=>{
+  prog += Math.random()*3.5 + .5;
+  if(prog >= 100){ prog=100; clearInterval(loadInt);
+    setTimeout(()=>loaderEl.classList.add('out'), 700);
+  }
+  fill.style.width = prog+'%';
+  lnum.textContent = Math.floor(prog)+'%';
+},50);
+
+/* ═══════════════════════════════════════════════════
+   THREE.JS
+═══════════════════════════════════════════════════ */
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x0a0906, 0.028);
+
+const isMobile = innerWidth < 600;
+const camera = new THREE.PerspectiveCamera(isMobile ? 70 : 55, innerWidth/innerHeight, .1, 200);
+camera.position.set(0, 0, isMobile ? 26 : 22);
+
+// ── CENTRAL ORB
+const orbGeo = new THREE.SphereGeometry(3, 80, 80);
+const orbMat = new THREE.MeshStandardMaterial({
+  color:0x0c0b09, roughness:.05, metalness:.95,
+  emissive: new THREE.Color(0x3d2500), emissiveIntensity:.25
+});
+const orb = new THREE.Mesh(orbGeo, orbMat);
+scene.add(orb);
+
+// ── THIN EQUATORIAL RING
+const mkRing = (r, tube, color, opac, rx=0, ry=0, rz=0)=>{
+  const g = new THREE.TorusGeometry(r, tube, 8, 200);
+  const m = new THREE.MeshBasicMaterial({color, transparent:true, opacity:opac});
+  const t = new THREE.Mesh(g,m);
+  t.rotation.set(rx,ry,rz); scene.add(t); return t;
+};
+const ring1 = mkRing(4.2, .012, 0xb8935a, .6, Math.PI*.35, 0, .1);
+const ring2 = mkRing(5.0, .007, 0xb8935a, .3, -Math.PI*.2, .3, 0);
+const ring3 = mkRing(6.0, .004, 0xb8935a, .15, Math.PI*.1, .5, .2);
+
+// ── OUTER WIRE SPHERE
+const wGeo = new THREE.SphereGeometry(3.02, 18, 18);
+const wMat = new THREE.MeshBasicMaterial({color:0xb8935a, wireframe:true, transparent:true, opacity:.04});
+const wire = new THREE.Mesh(wGeo,wMat);
+scene.add(wire);
+
+// ── ICOSAHEDRON ACCENT
+const icoGeo = new THREE.IcosahedronGeometry(3.3, 1);
+const icoMat = new THREE.MeshBasicMaterial({color:0xb8935a, wireframe:true, transparent:true, opacity:.025});
+const ico = new THREE.Mesh(icoGeo, icoMat);
+scene.add(ico);
+
+// ── PARTICLE FIELD
+const PC = 3000;
+const pPos = new Float32Array(PC*3);
+for(let i=0;i<PC;i++){
+  const r=7+Math.random()*35, t=Math.random()*Math.PI*2, p=Math.acos(2*Math.random()-1);
+  pPos[i*3]=r*Math.sin(p)*Math.cos(t);
+  pPos[i*3+1]=r*Math.sin(p)*Math.sin(t);
+  pPos[i*3+2]=r*Math.cos(p);
+}
+const pGeo = new THREE.BufferGeometry();
+pGeo.setAttribute('position', new THREE.BufferAttribute(pPos,3));
+const pMat = new THREE.PointsMaterial({color:0xb8935a, size:.045, transparent:true, opacity:.35, sizeAttenuation:true, depthWrite:false});
+const pts = new THREE.Points(pGeo, pMat);
+scene.add(pts);
+
+// ── FLOATING TEXT SPRITES
+const glyphs = [
+  '語','こ','ん','に','ち','は',
+  'مر','حب','ا','ب',
+  '你','好','漢','字',
+  'α','Ω','δ','λ',
+  '한','국','어',
+  'Ciao','Olá','Hola','Bonjour','Привет',
+  'ñ','ü','è','ø'
+];
+const spriteGroup = [];
+
+function makeSprite(txt, sz=70){
+  const cv = document.createElement('canvas');
+  cv.width=256; cv.height=128;
+  const cx=cv.getContext('2d');
+  cx.font = `${sz}px 'Libre Baskerville', serif`;
+  cx.fillStyle='#b8935a'; cx.globalAlpha=.55;
+  cx.textAlign='center'; cx.textBaseline='middle';
+  cx.fillText(txt,128,68);
+  const tex = new THREE.CanvasTexture(cv);
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:tex, transparent:true, depthWrite:false}));
+  return sp;
+}
+
+glyphs.forEach((g,i)=>{
+  const sp = makeSprite(g);
+  const r=5.8+Math.random()*3.5;
+  const theta=Math.random()*Math.PI*2, phi=Math.acos(2*Math.random()-1);
+  sp.position.set(r*Math.sin(phi)*Math.cos(theta), r*Math.sin(phi)*Math.sin(theta), r*Math.cos(phi));
+  const s=.5+Math.random()*.8;
+  sp.scale.set(s*2.2, s, 1);
+  sp.userData={r, theta, phi, speed:(Math.random()-.5)*.0007, phase:Math.random()*Math.PI*2};
+  scene.add(sp); spriteGroup.push(sp);
+});
+
+// ── LIGHTS
+scene.add(new THREE.AmbientLight(0x100a04, 1.5));
+const l1=new THREE.PointLight(0xe8b86d, 2.5, 25); l1.position.set(6,5,6); scene.add(l1);
+const l2=new THREE.PointLight(0xb8935a, 1.8, 18); l2.position.set(-6,-4,4); scene.add(l2);
+const l3=new THREE.PointLight(0x0d1a2a, 1.2, 20); l3.position.set(0,-9,-6); scene.add(l3);
+
+// ── MOUSE / TOUCH
+const mouse={x:0,y:0};
+document.addEventListener('mousemove',e=>{
+  mouse.x=(e.clientX/innerWidth-.5)*2;
+  mouse.y=-(e.clientY/innerHeight-.5)*2;
+});
+document.addEventListener('touchmove',e=>{
+  const t=e.touches[0];
+  mouse.x=(t.clientX/innerWidth-.5)*2;
+  mouse.y=-(t.clientY/innerHeight-.5)*2;
+},{passive:true});
+
+// ── ANIMATE
+let t=0;
+(function tick(){
+  requestAnimationFrame(tick);
+  t+=.008;
+  orb.rotation.y+=.0015; orb.rotation.x+=.0006;
+  wire.rotation.y-=.002; wire.rotation.x+=.0007;
+  ico.rotation.y+=.003; ico.rotation.z+=.001;
+  ring1.rotation.z+=.003;
+  ring2.rotation.x+=.002; ring2.rotation.y+=.001;
+  ring3.rotation.y-=.0015; ring3.rotation.z+=.001;
+  pts.rotation.y+=.0003; pts.rotation.x+=.0001;
+  l1.position.x=Math.sin(t*.4)*7; l1.position.z=Math.cos(t*.4)*7;
+
+  spriteGroup.forEach(sp=>{
+    const d=sp.userData;
+    d.theta+=d.speed;
+    const wob=Math.sin(t*.6+d.phase)*.4;
+    sp.position.set(
+      d.r*Math.sin(d.phi)*Math.cos(d.theta),
+      d.r*Math.sin(d.phi)*Math.sin(d.theta)+wob,
+      d.r*Math.cos(d.phi)
+    );
+    sp.material.opacity=.15+.4*Math.abs(Math.sin(t*.35+d.phase));
+  });
+
+  camera.position.x+=(mouse.x*2.5-camera.position.x)*.018;
+  camera.position.y+=(mouse.y*1.8-camera.position.y)*.018;
+  camera.lookAt(0,0,0);
+  renderer.render(scene,camera);
+})();
+
+window.addEventListener('resize',()=>{
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+});
+
+/* ═══════════════════════════════════════════════════
+   FLOATING GLYPHS IN UI
+═══════════════════════════════════════════════════ */
+const uiGlyphs=['語','مرحبا','Bonjour','你好','Hola','Ciao','한국어','Olá','Привет','Ω','こんにちは','Namaste','Hej','Merhaba','αβγ','漢字','ñ','ü','Cзíme','Γεια'];
+const shell = document.getElementById('shell');
+function spawnGlyph(){
+  const el = document.createElement('div');
+  el.className='glyph';
+  el.textContent=uiGlyphs[Math.floor(Math.random()*uiGlyphs.length)];
+  // Spread across the full canvas, avoiding the very center
+  const side = Math.random();
+  if(side < 0.25) { el.style.left=(3+Math.random()*18)+'%'; }
+  else if(side < 0.5) { el.style.left=(78+Math.random()*18)+'%'; }
+  else { el.style.left=(20+Math.random()*60)+'%'; }
+  el.style.top=(8+Math.random()*82)+'%';
+  el.style.fontSize=(1.2+Math.random()*4)+'rem';
+  el.style.opacity='0';
+  const dur=9+Math.random()*9;
+  el.style.animation=`glyphFloat ${dur}s ease-in-out forwards`;
+  shell.appendChild(el);
+  setTimeout(()=>el.remove(), dur*1000);
+}
+setInterval(spawnGlyph, 1800);
+// Seed initial glyphs
+setTimeout(()=>{ for(let i=0;i<6;i++) setTimeout(spawnGlyph, i*300); }, 3200);
+
+/* ═══════════════════════════════════════════════════
+   CHATBOT
+═══════════════════════════════════════════════════ */
+const chatPanel = document.getElementById('chat');
+const chatBtn   = document.getElementById('chat-btn');
+const chatClose = document.getElementById('chat-close');
+const msgsDiv   = document.getElementById('msgs');
+const input     = document.getElementById('chat-input');
+const sendBtn   = document.getElementById('send-btn');
+
+chatBtn.addEventListener('click', ()=>{
+  chatPanel.classList.add('open');
+  chatBtn.style.opacity='0.4';
+  input.focus();
+});
+chatClose.addEventListener('click',()=>{
+  chatPanel.classList.remove('open');
+  chatBtn.style.opacity='1';
+});
+
+// Auto-resize textarea
+input.addEventListener('input',()=>{
+  input.style.height='auto';
+  input.style.height=Math.min(input.scrollHeight,80)+'px';
+});
+input.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); send(); }
+});
+sendBtn.addEventListener('click',send);
+
+document.querySelectorAll('.quick').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    input.value=btn.dataset.q;
+    send();
+  });
+});
+
+let history=[];
+
+function addMsg(role, text){
+  const wrap=document.createElement('div');
+  wrap.className=`msg ${role}`;
+  const roleEl=document.createElement('div');
+  roleEl.className='msg-role';
+  roleEl.textContent=role==='bot'?'Talkora':'You';
+  const body=document.createElement('div');
+  body.className='msg-body';
+  body.textContent=text;
+  wrap.append(roleEl,body);
+  msgsDiv.appendChild(wrap);
+  msgsDiv.scrollTop=msgsDiv.scrollHeight;
+  return body;
+}
+
+function showTyping(){
+  const wrap=document.createElement('div');
+  wrap.className='msg bot'; wrap.id='typing';
+  const roleEl=document.createElement('div');
+  roleEl.className='msg-role'; roleEl.textContent='Talkora';
+  const dots=document.createElement('div');
+  dots.className='typing-dots';
+  dots.innerHTML='<span></span><span></span><span></span>';
+  wrap.append(roleEl,dots);
+  msgsDiv.appendChild(wrap);
+  msgsDiv.scrollTop=msgsDiv.scrollHeight;
+  return wrap;
+}
+
+async function send(){
+  const text=input.value.trim();
+  if(!text) return;
+  input.value=''; input.style.height='auto';
+
+  addMsg('user', text);
+  history.push({role:'user', content:text});
+
+  const typing=showTyping();
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:`You are Talkora's language learning assistant — warm, elegant, and deeply knowledgeable. You help learners integrate language practice into their daily routines: morning rituals, commutes, meals, work breaks, evenings, and bedtime. You give practical, imaginative, culturally rich advice tailored to the time of day and the learner's language. Keep answers concise but poetic — 2-4 short paragraphs maximum. Never use bullet lists. Write in flowing prose.`,
+        messages: history
+      })
+    });
+
+    typing.remove();
+
+    if(!res.ok){
+      const err=await res.json().catch(()=>({}));
+      addMsg('bot', err?.error?.message || 'Something went wrong. Please try again.');
+      history.pop();
+      return;
+    }
+
+    const data=await res.json();
+    const reply=data.content?.map(b=>b.text||'').join('').trim();
+    addMsg('bot', reply);
+    history.push({role:'assistant', content:reply});
+
+  } catch(e){
+    typing.remove();
+    addMsg('bot','I seem to have lost the connection. Please try again.');
+    history.pop();
+  }
+}
+
+// Start btn opens chat
+document.getElementById('start-btn').addEventListener('click',()=>{
+  chatPanel.classList.add('open');
+  chatBtn.style.opacity='.4';
+  input.focus();
+  if(history.length===0){
+    input.value="I'm starting my language learning journey. Where do I begin?";
+  }
+});
+
+/* ═══════════════════════════════════════════════════
+   GAMES ENGINE
+═══════════════════════════════════════════════════ */
+
+// Open/close
+const gamesOverlay = document.getElementById('games-overlay');
+document.getElementById('nav-games').addEventListener('click', () => gamesOverlay.classList.add('open'));
+document.getElementById('games-close').addEventListener('click', () => gamesOverlay.classList.remove('open'));
+gamesOverlay.addEventListener('click', e => { if(e.target === gamesOverlay) gamesOverlay.classList.remove('open'); });
+
+// Tab switching
+document.querySelectorAll('.g-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.g-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.game-screen').forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('game-' + tab.dataset.game).classList.add('active');
+  });
+});
+
+/* ─────────────────────────────────────────────────
+   DATA
+───────────────────────────────────────────────── */
+const PHRASES = {
+  es: [
+    { text: 'Buenos días, ¿cómo estás hoy?', translation: 'Good morning, how are you today?' },
+    { text: 'Me gustaría aprender más idiomas.', translation: 'I would like to learn more languages.' },
+    { text: 'La vida es bella cuando hablas otro idioma.', translation: 'Life is beautiful when you speak another language.' },
+    { text: 'Cada palabra es una nueva ventana al mundo.', translation: 'Every word is a new window to the world.' },
+    { text: 'El conocimiento de idiomas abre puertas.', translation: 'Knowledge of languages opens doors.' },
+  ],
+  fr: [
+    { text: 'Bonjour, comment allez-vous aujourd\u2019hui?', translation: 'Hello, how are you today?' },
+    { text: 'Apprendre une langue, c\u2019est vivre une autre vie.', translation: 'Learning a language is living another life.' },
+    { text: 'Je voudrais parler français couramment.', translation: 'I would like to speak French fluently.' },
+    { text: 'Chaque mot est une nouvelle aventure.', translation: 'Every word is a new adventure.' },
+    { text: 'La langue est la clé de la culture.', translation: 'Language is the key to culture.' },
+  ],
+  ja: [
+    { text: 'おはようございます。今日もよい一日を。', translation: 'Good morning. Have a good day today.' },
+    { text: '言語を学ぶことは文化を学ぶことです。', translation: 'Learning a language is learning a culture.' },
+    { text: '毎日少しずつ練習することが大切です。', translation: 'It is important to practice little by little every day.' },
+    { text: 'あなたの夢は何ですか？', translation: 'What is your dream?' },
+  ],
+  ar: [
+    { text: 'صباح الخير، كيف حالك اليوم؟', translation: 'Good morning, how are you today?' },
+    { text: 'تعلم اللغة يفتح الأبواب.', translation: 'Learning a language opens doors.' },
+    { text: 'كل كلمة جديدة هي نافذة على العالم.', translation: 'Every new word is a window to the world.' },
+  ],
+  de: [
+    { text: 'Guten Morgen, wie geht es Ihnen heute?', translation: 'Good morning, how are you today?' },
+    { text: 'Sprachen lernen macht das Leben reicher.', translation: 'Learning languages makes life richer.' },
+    { text: 'Jedes Wort ist ein Schlüssel zur Welt.', translation: 'Every word is a key to the world.' },
+    { text: 'Ich möchte fließend Deutsch sprechen.', translation: 'I want to speak German fluently.' },
+  ],
+  it: [
+    { text: 'Buongiorno, come stai oggi?', translation: 'Good morning, how are you today?' },
+    { text: 'Imparare una lingua è aprire una porta.', translation: 'Learning a language is opening a door.' },
+    { text: 'La vita è bella quando parli italiano.', translation: 'Life is beautiful when you speak Italian.' },
+    { text: 'Ogni parola è un nuovo mondo.', translation: 'Every word is a new world.' },
+  ],
+};
+
+const VOCAB = {
+  es: [
+    {w:'mariposa',m:'butterfly'},{w:'cielo',m:'sky'},{w:'luna',m:'moon'},
+    {w:'fuego',m:'fire'},{w:'agua',m:'water'},{w:'tierra',m:'earth'},
+    {w:'corazón',m:'heart'},{w:'alma',m:'soul'},{w:'sueño',m:'dream'},
+    {w:'amor',m:'love'},{w:'paz',m:'peace'},{w:'noche',m:'night'},
+  ],
+  fr: [
+    {w:'papillon',m:'butterfly'},{w:'ciel',m:'sky'},{w:'lune',m:'moon'},
+    {w:'feu',m:'fire'},{w:'eau',m:'water'},{w:'terre',m:'earth'},
+    {w:'coeur',m:'heart'},{w:'âme',m:'soul'},{w:'rêve',m:'dream'},
+    {w:'amour',m:'love'},{w:'paix',m:'peace'},{w:'nuit',m:'night'},
+  ],
+  ja: [
+    {w:'蝶',m:'butterfly'},{w:'空',m:'sky'},{w:'月',m:'moon'},
+    {w:'火',m:'fire'},{w:'水',m:'water'},{w:'大地',m:'earth'},
+    {w:'心',m:'heart'},{w:'魂',m:'soul'},{w:'夢',m:'dream'},
+    {w:'愛',m:'love'},{w:'平和',m:'peace'},{w:'夜',m:'night'},
+  ],
+  ar: [
+    {w:'فراشة',m:'butterfly'},{w:'سماء',m:'sky'},{w:'قمر',m:'moon'},
+    {w:'نار',m:'fire'},{w:'ماء',m:'water'},{w:'أرض',m:'earth'},
+    {w:'قلب',m:'heart'},{w:'روح',m:'soul'},{w:'حلم',m:'dream'},
+    {w:'حب',m:'love'},{w:'سلام',m:'peace'},{w:'ليل',m:'night'},
+  ],
+  de: [
+    {w:'Schmetterling',m:'butterfly'},{w:'Himmel',m:'sky'},{w:'Mond',m:'moon'},
+    {w:'Feuer',m:'fire'},{w:'Wasser',m:'water'},{w:'Erde',m:'earth'},
+    {w:'Herz',m:'heart'},{w:'Seele',m:'soul'},{w:'Traum',m:'dream'},
+    {w:'Liebe',m:'love'},{w:'Frieden',m:'peace'},{w:'Nacht',m:'night'},
+  ],
+  it: [
+    {w:'farfalla',m:'butterfly'},{w:'cielo',m:'sky'},{w:'luna',m:'moon'},
+    {w:'fuoco',m:'fire'},{w:'acqua',m:'water'},{w:'terra',m:'earth'},
+    {w:'cuore',m:'heart'},{w:'anima',m:'soul'},{w:'sogno',m:'dream'},
+    {w:'amore',m:'love'},{w:'pace',m:'peace'},{w:'notte',m:'night'},
+  ],
+};
+
+const GLYPHS = {
+  ja: [
+    {char:'あ',ans:'a'},{char:'い',ans:'i'},{char:'う',ans:'u'},{char:'え',ans:'e'},
+    {char:'お',ans:'o'},{char:'か',ans:'ka'},{char:'き',ans:'ki'},{char:'く',ans:'ku'},
+    {char:'け',ans:'ke'},{char:'こ',ans:'ko'},{char:'さ',ans:'sa'},{char:'し',ans:'shi'},
+    {char:'す',ans:'su'},{char:'せ',ans:'se'},{char:'そ',ans:'so'},{char:'た',ans:'ta'},
+    {char:'な',ans:'na'},{char:'に',ans:'ni'},{char:'は',ans:'ha'},{char:'ま',ans:'ma'},
+  ],
+  ar: [
+    {char:'ا',ans:'alif'},{char:'ب',ans:'ba'},{char:'ت',ans:'ta'},{char:'ث',ans:'tha'},
+    {char:'ج',ans:'jim'},{char:'ح',ans:'ha'},{char:'خ',ans:'kha'},{char:'د',ans:'dal'},
+    {char:'ر',ans:'ra'},{char:'ز',ans:'zay'},{char:'س',ans:'sin'},{char:'ش',ans:'shin'},
+    {char:'ع',ans:'ayn'},{char:'غ',ans:'ghayn'},{char:'ف',ans:'fa'},{char:'ق',ans:'qaf'},
+  ],
+  zh: [
+    {char:'人',ans:'rén (person)'},{char:'山',ans:'shān (mountain)'},{char:'水',ans:'shuǐ (water)'},
+    {char:'火',ans:'huǒ (fire)'},{char:'木',ans:'mù (wood)'},{char:'日',ans:'rì (sun)'},
+    {char:'月',ans:'yuè (moon)'},{char:'大',ans:'dà (big)'},{char:'小',ans:'xiǎo (small)'},
+    {char:'心',ans:'xīn (heart)'},{char:'天',ans:'tiān (sky)'},{char:'地',ans:'dì (earth)'},
+  ],
+  gr: [
+    {char:'α',ans:'alpha'},{char:'β',ans:'beta'},{char:'γ',ans:'gamma'},{char:'δ',ans:'delta'},
+    {char:'ε',ans:'epsilon'},{char:'ζ',ans:'zeta'},{char:'η',ans:'eta'},{char:'θ',ans:'theta'},
+    {char:'λ',ans:'lambda'},{char:'μ',ans:'mu'},{char:'π',ans:'pi'},{char:'σ',ans:'sigma'},
+    {char:'φ',ans:'phi'},{char:'χ',ans:'chi'},{char:'ψ',ans:'psi'},{char:'ω',ans:'omega'},
+  ],
+};
+
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-.5); }
+function pick(arr, n){ return shuffle(arr).slice(0,n); }
+
+/* ─────────────────────────────────────────────────
+   GAME 1 — TYPE RACER
+───────────────────────────────────────────────── */
+let racerActive=false, racerStartTime=0, racerErrors=0, racerTotal=0, racerScore=0;
+let racerPhrase='', racerTranslation='', racerIdx=0;
+
+const racerPhraseEl = document.getElementById('racer-phrase');
+const racerTransEl  = document.getElementById('racer-translation');
+const racerInputEl  = document.getElementById('racer-input');
+const racerProgEl   = document.getElementById('racer-prog');
+const racerWpmEl    = document.getElementById('racer-wpm');
+const racerAccEl    = document.getElementById('racer-acc');
+const racerScoreEl  = document.getElementById('racer-score');
+const racerStartBtn = document.getElementById('racer-start');
+
+function racerLoadPhrase(){
+  const lang = document.getElementById('racer-lang').value;
+  const pool = PHRASES[lang] || PHRASES.es;
+  const p = pool[Math.floor(Math.random()*pool.length)];
+  racerPhrase = p.text;
+  racerTranslation = p.translation;
+  racerIdx = 0; racerErrors = 0; racerTotal = 0;
+  racerTransEl.textContent = p.translation;
+  racerRenderPhrase();
+  racerProgEl.style.width = '0%';
+  racerWpmEl.textContent = '–'; racerAccEl.textContent = '–';
+}
+
+function racerRenderPhrase(){
+  const chars = racerPhrase.split('');
+  racerPhraseEl.innerHTML = chars.map((ch, i) => {
+    let cls = '';
+    if(i < racerIdx) cls = 'correct';
+    else if(i === racerIdx) cls = 'cursor';
+    return `<span class="${cls}">${ch === ' ' ? '&nbsp;' : ch}</span>`;
+  }).join('');
+}
+
+racerInputEl.addEventListener('input', () => {
+  if(!racerActive) return;
+  const typed = racerInputEl.value;
+  const expected = racerPhrase.slice(0, typed.length);
+
+  if(!racerStartTime) racerStartTime = Date.now();
+
+  // Count only newly typed chars
+  racerTotal = typed.length;
+  let errs = 0;
+  for(let i=0;i<typed.length;i++) if(typed[i] !== racerPhrase[i]) errs++;
+  racerErrors = errs;
+
+  // Find how many correct from start
+  let correct = 0;
+  for(let i=0;i<typed.length;i++){
+    if(typed[i]===racerPhrase[i]) correct++;
+    else break;
+  }
+  racerIdx = correct;
+
+  // WPM
+  const elapsed = (Date.now()-racerStartTime)/60000;
+  const wpm = elapsed > 0 ? Math.round((correct/5)/elapsed) : 0;
+  const acc = racerTotal > 0 ? Math.round(((racerTotal-racerErrors)/racerTotal)*100) : 100;
+  racerWpmEl.textContent = wpm;
+  racerAccEl.textContent = acc+'%';
+  racerProgEl.style.width = Math.round((correct/racerPhrase.length)*100)+'%';
+
+  racerRenderPhrase();
+
+  // Completed
+  if(correct >= racerPhrase.length){
+    racerActive = false;
+    racerInputEl.disabled = true;
+    const bonus = Math.max(0, 100 - racerErrors*5);
+    racerScore += wpm + bonus;
+    racerScoreEl.textContent = racerScore;
+    racerStartBtn.textContent = 'Next Phrase →';
+    racerTransEl.textContent = '✓ ' + racerTranslation + ' — ' + wpm + ' WPM!';
+  }
+});
+
+racerStartBtn.addEventListener('click', () => {
+  racerActive = true; racerStartTime = 0;
+  racerInputEl.disabled = false;
+  racerInputEl.value = '';
+  racerInputEl.focus();
+  racerStartBtn.textContent = 'Begin Race';
+  racerLoadPhrase();
+});
+racerLoadPhrase();
+
+/* ─────────────────────────────────────────────────
+   GAME 2 — WORD FLASH
+───────────────────────────────────────────────── */
+let flashScore=0, flashStreak=0, flashActive=false, flashTimer=null, flashCurrent=null, flashPool=[];
+
+const flashWordEl   = document.getElementById('flash-word');
+const flashFillEl   = document.getElementById('flash-timer-fill');
+const flashChoicesEl= document.getElementById('flash-choices');
+const flashScoreEl  = document.getElementById('flash-score');
+const flashStreakEl = document.getElementById('flash-streak');
+const flashStartBtn = document.getElementById('flash-start');
+
+function flashLoad(){
+  if(!flashActive) return;
+  const lang = document.getElementById('flash-lang').value;
+  const pool = VOCAB[lang] || VOCAB.es;
+  flashCurrent = pool[Math.floor(Math.random()*pool.length)];
+  flashWordEl.textContent = flashCurrent.w;
+
+  // 4 choices: 1 correct + 3 random wrong
+  const others = pool.filter(v=>v!==flashCurrent);
+  const choices = shuffle([flashCurrent, ...pick(others,3)]);
+  flashChoicesEl.innerHTML='';
+  choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className='flash-choice';
+    btn.textContent = c.m;
+    btn.addEventListener('click', () => flashAnswer(btn, c));
+    flashChoicesEl.appendChild(btn);
+  });
+
+  // Timer 7s
+  clearTimeout(flashTimer);
+  flashFillEl.style.transition='none';
+  flashFillEl.style.width='100%';
+  setTimeout(()=>{
+    flashFillEl.style.transition=`width 7s linear`;
+    flashFillEl.style.width='0%';
+  },30);
+  flashTimer = setTimeout(()=>{
+    if(flashActive){ flashStreak=0; flashStreakEl.textContent=flashStreak; flashLoad(); }
+  }, 7000);
+}
+
+function flashAnswer(btn, chosen){
+  clearTimeout(flashTimer);
+  document.querySelectorAll('.flash-choice').forEach(b => b.disabled=true);
+  if(chosen.m === flashCurrent.m){
+    btn.classList.add('correct');
+    flashScore+=10+flashStreak*2;
+    flashStreak++;
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.flash-choice').forEach(b=>{
+      if(b.textContent===flashCurrent.m) b.classList.add('correct');
+    });
+    flashStreak=0;
+  }
+  flashScoreEl.textContent=flashScore;
+  flashStreakEl.textContent=flashStreak;
+  setTimeout(flashLoad, 900);
+}
+
+flashStartBtn.addEventListener('click', ()=>{
+  flashActive=true; flashScore=0; flashStreak=0;
+  flashScoreEl.textContent=0; flashStreakEl.textContent=0;
+  flashStartBtn.style.display='none';
+  flashLoad();
+});
+
+/* ─────────────────────────────────────────────────
+   GAME 3 — GLYPH MATCH
+───────────────────────────────────────────────── */
+let glyphScore=0, glyphLives=3, glyphActive=false, glyphCurrent=null;
+
+const glyphCharEl  = document.getElementById('glyph-char');
+const glyphPromptEl= document.getElementById('glyph-prompt');
+const glyphGridEl  = document.getElementById('glyph-grid');
+const glyphScoreEl = document.getElementById('glyph-score');
+const glyphLivesEl = document.getElementById('glyph-lives');
+const glyphStartBtn= document.getElementById('glyph-start');
+
+function glyphLoad(){
+  if(!glyphActive) return;
+  const lang = document.getElementById('glyph-lang').value;
+  const pool = GLYPHS[lang] || GLYPHS.ja;
+  glyphCurrent = pool[Math.floor(Math.random()*pool.length)];
+  glyphCharEl.textContent = glyphCurrent.char;
+  glyphCharEl.classList.remove('pop');
+  void glyphCharEl.offsetWidth;
+  glyphCharEl.classList.add('pop');
+
+  const prompt = lang==='zh' ? 'Choose the correct pronunciation & meaning'
+    : lang==='gr' ? 'Choose the correct Greek letter name'
+    : 'Choose the correct romanization';
+  glyphPromptEl.textContent = prompt;
+
+  const others = pool.filter(g=>g!==glyphCurrent);
+  const opts = shuffle([glyphCurrent, ...pick(others,3)]);
+  glyphGridEl.innerHTML='';
+  opts.forEach(opt=>{
+    const btn=document.createElement('button');
+    btn.className='glyph-opt';
+    btn.textContent=opt.ans;
+    btn.addEventListener('click',()=>glyphAnswer(btn,opt));
+    glyphGridEl.appendChild(btn);
+  });
+}
+
+function glyphAnswer(btn, chosen){
+  document.querySelectorAll('.glyph-opt').forEach(b=>b.disabled=true);
+  if(chosen.ans===glyphCurrent.ans){
+    btn.classList.add('correct');
+    glyphScore+=15;
+    glyphScoreEl.textContent=glyphScore;
+    setTimeout(glyphLoad,700);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.glyph-opt').forEach(b=>{
+      if(b.textContent===glyphCurrent.ans) b.classList.add('correct');
+    });
+    glyphLives--;
+    glyphLivesEl.textContent='♥'.repeat(Math.max(0,glyphLives))+'♡'.repeat(Math.max(0,3-glyphLives));
+    if(glyphLives<=0){
+      glyphActive=false;
+      setTimeout(()=>{
+        glyphCharEl.textContent='✕';
+        glyphPromptEl.textContent='Game over! Score: '+glyphScore;
+        glyphGridEl.innerHTML='';
+        glyphStartBtn.textContent='Play Again';
+        glyphStartBtn.style.display='block';
+      },800);
+    } else {
+      setTimeout(glyphLoad,1000);
+    }
+  }
+}
+
+glyphStartBtn.addEventListener('click',()=>{
+  glyphActive=true; glyphScore=0; glyphLives=3;
+  glyphScoreEl.textContent=0;
+  glyphLivesEl.textContent='♥♥♥';
+  glyphStartBtn.style.display='none';
+  glyphLoad();
+});
+</script>
+</body>
+</html>
