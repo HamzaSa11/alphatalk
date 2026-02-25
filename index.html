@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TALKORA — Language as a Way of Life</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ── CURSOR ─────────────────────────────────────── -->
+<div id="cur"></div>
+<div id="cur-r"></div>
+
+<!-- ── LOADER ────────────────────────────────────── -->
+<div id="loader">
+  <div class="l-logo">Talkora</div>
+  <div class="l-track"><div class="l-fill" id="lfill"></div></div>
+  <div class="l-num" id="lnum">0%</div>
+</div>
+
+<!-- ── THREE.JS CANVAS ───────────────────────────── -->
+<canvas id="c"></canvas>
+
+<!-- ── UI SHELL ──────────────────────────────────── -->
+<div id="shell">
+
+  <!-- NAV -->
+  <nav id="nav">
+    <div class="n-langs">
+      <div class="n-lang-dot"></div><span>ES</span>
+      <div class="n-lang-dot"></div><span>FR</span>
+      <div class="n-lang-dot"></div><span>JA</span>
+      <div class="n-lang-dot"></div><span>AR</span>
+    </div>
+    <div class="n-logo">Talkora</div>
+    <div class="n-links">
+      <div class="n-link">Languages</div>
+      <div class="n-link">Method</div>
+      <div class="n-link" id="nav-games">Play</div>
+      <div class="n-link">Join</div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div id="hero">
+    <div class="h-sup">Language as a Way of Life</div>
+    <h1 class="h-title">
+      Live<br><em>Through</em><br>Language
+    </h1>
+    <p class="h-body">Daily routines · Cultural immersion · Real conversations</p>
+    <div class="h-divider"></div>
+    <div class="h-actions">
+      <button class="btn-primary" id="start-btn">Begin Your Journey</button>
+      <button class="btn-ghost">Explore Method</button>
+    </div>
+  </div>
+
+  <!-- EDGE TEXTS -->
+  <div class="edge l">Japanese · Arabic · French · Mandarin · Spanish · Portuguese</div>
+  <div class="edge r">Morning · Afternoon · Evening · Night · Every Moment</div>
+
+  <!-- CORNER COORDS -->
+  <div class="corner tl">36.7749° N · 119.4194° W</div>
+  <div class="corner tr">EST · 2024 · v1.0</div>
+  <div class="corner bl">47 Languages · Active</div>
+  <div class="corner br">Session · Ongoing</div>
+
+  <!-- ATMOSPHERE LINES -->
+  <div class="atm-line top"></div>
+  <div class="atm-line bot"></div>
+
+  <!-- STATS BAR -->
+  <div id="status">
+    <div class="stat">
+      <div class="stat-n">47</div>
+      <div class="stat-l">Languages</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">3.1M</div>
+      <div class="stat-l">Learners</div>
+    </div>
+    <div class="stat center">
+      <div class="stat-n">語 · مرحبا · Bonjour</div>
+      <div class="stat-l">Every script · Every world</div>
+    </div>
+    <div class="stat" style="text-align:right">
+      <div class="stat-n">96%</div>
+      <div class="stat-l">Fluency Rate</div>
+    </div>
+    <div class="stat" style="text-align:right">
+      <div class="stat-n">180</div>
+      <div class="stat-l">Countries</div>
+    </div>
+  </div>
+
+  <!-- CHAT BUTTON -->
+  <button id="chat-btn" aria-label="Open assistant">
+    <div class="chat-pulse"></div>
+    <svg viewBox="0 0 24 24">
+      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+    </svg>
+  </button>
+
+  <!-- CHAT PANEL -->
+  <div id="chat">
+    <div class="chat-head">
+      <div class="chat-head-l">
+        <div class="chat-title">Talkora Assistant</div>
+        <div class="chat-sub">Your daily learning companion</div>
+      </div>
+      <button class="chat-close" id="chat-close">✕</button>
+    </div>
+    <div class="quick-wrap">
+      <button class="quick" data-q="What's a good morning routine to practice Spanish?">Morning routine</button>
+      <button class="quick" data-q="Give me a lunch break activity to practice French vocabulary.">Lunch activity</button>
+      <button class="quick" data-q="How can I wind down at night while still learning Japanese?">Evening wind-down</button>
+      <button class="quick" data-q="I have 10 minutes — what's the best micro-practice for Arabic?">10-min micro practice</button>
+    </div>
+    <div class="chat-msgs" id="msgs">
+      <div class="msg bot">
+        <div class="msg-role">Talkora</div>
+        <div class="msg-body">Bienvenido. I'm here to weave your language learning into every corner of your day — mornings, commutes, meals, and quiet evenings. What shall we explore?</div>
+      </div>
+    </div>
+    <div class="chat-foot">
+      <textarea id="chat-input" rows="1" placeholder="Ask about routines, activities, tips…"></textarea>
+      <button id="send-btn">
+        <svg viewBox="0 0 24 24">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- GAMES OVERLAY -->
+  <div id="games-overlay">
+    <div id="games-panel">
+
+      <div class="gp-header">
+        <div class="gp-header-l">
+          <div class="gp-title">Play &amp; Learn</div>
+          <div class="gp-sub">Three games &middot; Infinite languages</div>
+        </div>
+        <button id="games-close">&#10005;</button>
+      </div>
+
+      <div class="game-tabs">
+        <button class="g-tab active" data-game="racer">
+          <span class="g-icon">&#9000;</span>
+          <span class="g-name">Type Racer</span>
+          <span class="g-desc">Race the phrase</span>
+        </button>
+        <button class="g-tab" data-game="flash">
+          <span class="g-icon">&#9889;</span>
+          <span class="g-name">Word Flash</span>
+          <span class="g-desc">Flashcard duel</span>
+        </button>
+        <button class="g-tab" data-game="glyph">
+          <span class="g-icon">&#23383;</span>
+          <span class="g-name">Glyph Match</span>
+          <span class="g-desc">Match the script</span>
+        </button>
+      </div>
+
+      <div class="game-arena">
+
+        <!-- TYPE RACER -->
+        <div class="game-screen active" id="game-racer">
+          <div class="game-lang-bar">
+            <select class="glang-sel" id="racer-lang">
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+              <option value="ja">Japanese</option>
+              <option value="ar">Arabic</option>
+              <option value="de">German</option>
+              <option value="it">Italian</option>
+            </select>
+            <div class="racer-stats">
+              <span class="rs-item"><span class="rs-val" id="racer-wpm">&#8211;</span><span class="rs-lab">WPM</span></span>
+              <span class="rs-item"><span class="rs-val" id="racer-acc">&#8211;</span><span class="rs-lab">ACC</span></span>
+              <span class="rs-item"><span class="rs-val" id="racer-score">0</span><span class="rs-lab">PTS</span></span>
+            </div>
+          </div>
+          <div class="racer-area">
+            <div class="racer-translation" id="racer-translation">Select a language and begin</div>
+            <div class="racer-phrase" id="racer-phrase"><em>Your phrase will appear here</em></div>
+            <div class="racer-prog-track"><div id="racer-prog"></div></div>
+          </div>
+          <textarea class="racer-input" id="racer-input"
+            placeholder="Start typing here..." disabled
+            spellcheck="false" autocomplete="off"></textarea>
+          <button class="game-btn" id="racer-start">Begin Race</button>
+        </div>
+
+        <!-- WORD FLASH -->
+        <div class="game-screen" id="game-flash">
+          <div class="game-lang-bar">
+            <select class="glang-sel" id="flash-lang">
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+              <option value="ja">Japanese</option>
+              <option value="ar">Arabic</option>
+              <option value="de">German</option>
+              <option value="it">Italian</option>
+            </select>
+            <div class="racer-stats">
+              <span class="rs-item"><span class="rs-val" id="flash-score">0</span><span class="rs-lab">SCORE</span></span>
+              <span class="rs-item"><span class="rs-val" id="flash-streak">0</span><span class="rs-lab">STREAK</span></span>
+            </div>
+          </div>
+          <div class="flash-card-wrap">
+            <div class="flash-card" id="flash-card">
+              <div class="flash-word" id="flash-word">Press Start</div>
+              <div class="flash-hint">What does this mean?</div>
+            </div>
+            <div class="flash-timer-track"><div id="flash-timer-fill"></div></div>
+          </div>
+          <div class="flash-choices" id="flash-choices"></div>
+          <button class="game-btn" id="flash-start">Begin Flash</button>
+        </div>
+
+        <!-- GLYPH MATCH -->
+        <div class="game-screen" id="game-glyph">
+          <div class="game-lang-bar">
+            <select class="glang-sel" id="glyph-lang">
+              <option value="ja">Hiragana</option>
+              <option value="ar">Arabic</option>
+              <option value="zh">Chinese</option>
+              <option value="gr">Greek</option>
+            </select>
+            <div class="racer-stats">
+              <span class="rs-item"><span class="rs-val" id="glyph-score">0</span><span class="rs-lab">SCORE</span></span>
+              <span class="rs-item"><span class="rs-val" id="glyph-lives">&#9825;&#9825;&#9825;</span><span class="rs-lab">LIVES</span></span>
+            </div>
+          </div>
+          <div class="glyph-question">
+            <div class="glyph-char" id="glyph-char">?</div>
+            <div class="glyph-prompt" id="glyph-prompt">Choose the correct romanization</div>
+          </div>
+          <div class="glyph-grid" id="glyph-grid"></div>
+          <button class="game-btn" id="glyph-start">Begin Match</button>
+        </div>
+
+      </div><!-- /game-arena -->
+    </div><!-- /games-panel -->
+  </div><!-- /games-overlay -->
+
+</div><!-- /shell -->
+
+<!-- Three.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- App logic -->
+<script src="main.js"></script>
+
+</body>
+</html>
