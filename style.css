@@ -178,6 +178,7 @@ body.hovering #cur-r { width:48px; height:48px; border-color:rgba(184,147,90,0.5
   align-items:center; justify-content:center;
   transition:border-color .3s, background .3s; flex-shrink:0;
   position:relative; overflow:hidden;
+  pointer-events:all;
 }
 .theme-toggle:hover { border-color:var(--gold); background:var(--gold-glow); }
 .theme-toggle svg {
