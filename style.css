@@ -145,6 +145,12 @@ body.hovering #cur-r { width:48px; height:48px; border-color:rgba(184,147,90,0.5
   text-transform:uppercase; color:var(--text-mid); pointer-events:all;
   cursor:none; position:relative; transition:color .3s ease;
 }
+.n-link-live {
+  color:#e74c3c !important; text-decoration:none;
+  animation:livePulse 1.8s ease-in-out infinite;
+}
+.n-link-live::after { background:linear-gradient(to right, transparent, #e74c3c, transparent) !important; }
+@keyframes livePulse { 0%,100%{opacity:1} 50%{opacity:.55} }
 .n-link::after {
   content:''; position:absolute; bottom:-3px; left:0; right:0; height:1px;
   background:linear-gradient(to right, transparent, var(--gold), transparent);

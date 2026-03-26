@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TALKORA LIVE — Classroom</title>
+  <link rel="stylesheet" href="classroom.css">
+</head>
+<body>
+
+<!-- ══ SCREEN 1: LOBBY ═══════════════════════════════════ -->
+<div id="screen-lobby" class="screen active">
+  <header class="lobby-nav">
+    <a href="/" class="back-link">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Home
+    </a>
+    <div class="lobby-logo">Talkora <span class="live-badge">● Live</span></div>
+    <div class="lobby-nav-r">
+      <span class="lobby-time" id="lobby-clock"></span>
+    </div>
+  </header>
+
+  <div class="lobby-hero">
+    <div class="lobby-hero-sup">Live Language Classes</div>
+    <h1 class="lobby-hero-title">Join a Session <em>in Progress</em></h1>
+    <p class="lobby-hero-sub">Real teachers · Real conversations · Right now</p>
+  </div>
+
+  <div class="classes-grid" id="classes-grid">
+
+    <div class="class-card" data-class="0">
+      <div class="class-card-top">
+        <div class="class-lang-badge">ES</div>
+        <div class="class-live-dot">● LIVE</div>
+      </div>
+      <div class="class-script">Buenos días</div>
+      <div class="class-name">Spanish Morning Session</div>
+      <div class="class-meta">
+        <div class="class-teacher">
+          <div class="avatar-xs" style="--hue:32">SM</div>
+          Sofia Müller
+        </div>
+        <div class="class-topic">Conversational · Intermediate</div>
+      </div>
+      <div class="class-footer">
+        <div class="class-students"><span id="c0-count">12</span> students joined</div>
+        <div class="class-timer" id="c0-timer">14:23</div>
+      </div>
+      <button class="class-join-btn">Join Class →</button>
+    </div>
+
+    <div class="class-card" data-class="1">
+      <div class="class-card-top">
+        <div class="class-lang-badge">FR</div>
+        <div class="class-live-dot">● LIVE</div>
+      </div>
+      <div class="class-script">Bonsoir</div>
+      <div class="class-name">French Evening Conversation</div>
+      <div class="class-meta">
+        <div class="class-teacher">
+          <div class="avatar-xs" style="--hue:210">PL</div>
+          Pierre Laurent
+        </div>
+        <div class="class-topic">Culture & Idioms · Advanced</div>
+      </div>
+      <div class="class-footer">
+        <div class="class-students"><span id="c1-count">8</span> students joined</div>
+        <div class="class-timer" id="c1-timer">02:47</div>
+      </div>
+      <button class="class-join-btn">Join Class →</button>
+    </div>
+
+    <div class="class-card" data-class="2">
+      <div class="class-card-top">
+        <div class="class-lang-badge">JA</div>
+        <div class="class-live-dot">● LIVE</div>
+      </div>
+      <div class="class-script">はじめまして</div>
+      <div class="class-name">Japanese for Beginners</div>
+      <div class="class-meta">
+        <div class="class-teacher">
+          <div class="avatar-xs" style="--hue:340">YT</div>
+          Yuna Takahashi
+        </div>
+        <div class="class-topic">Hiragana & Greetings · Beginner</div>
+      </div>
+      <div class="class-footer">
+        <div class="class-students"><span id="c2-count">19</span> students joined</div>
+        <div class="class-timer" id="c2-timer">31:05</div>
+      </div>
+      <button class="class-join-btn">Join Class →</button>
+    </div>
+
+    <div class="class-card" data-class="3">
+      <div class="class-card-top">
+        <div class="class-lang-badge">AR</div>
+        <div class="class-live-dot">● LIVE</div>
+      </div>
+      <div class="class-script">مرحبا بكم</div>
+      <div class="class-name">Arabic Culture & Script</div>
+      <div class="class-meta">
+        <div class="class-teacher">
+          <div class="avatar-xs" style="--hue:160">HA</div>
+          Hassan Al-Farsi
+        </div>
+        <div class="class-topic">Script & Pronunciation · Beginner</div>
+      </div>
+      <div class="class-footer">
+        <div class="class-students"><span id="c3-count">6</span> students joined</div>
+        <div class="class-timer" id="c3-timer">07:18</div>
+      </div>
+      <button class="class-join-btn">Join Class →</button>
+    </div>
+
+  </div>
+
+  <div class="lobby-footer">
+    <span>Classes refresh automatically · All times local</span>
+  </div>
+</div>
+
+<!-- ══ SCREEN 2: PRE-JOIN ════════════════════════════════ -->
+<div id="screen-prejoin" class="screen">
+  <header class="pj-nav">
+    <button class="back-btn" id="pj-back">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to classes
+    </button>
+    <div class="lobby-logo">Talkora <span class="live-badge">● Live</span></div>
+    <div></div>
+  </header>
+
+  <div class="pj-body">
+    <div class="pj-preview-col">
+      <div class="pj-camera-wrap">
+        <div class="pj-camera" id="pj-camera">
+          <div class="pj-avatar" id="pj-avatar">Y</div>
+          <div class="pj-cam-off-label" id="pj-cam-off" style="display:none">Camera off</div>
+        </div>
+        <div class="pj-cam-border"></div>
+      </div>
+      <div class="pj-controls">
+        <button class="pj-ctrl active" id="pj-mic-btn" title="Toggle microphone">
+          <svg class="icon-mic-on" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0014 0"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
+          <svg class="icon-mic-off" viewBox="0 0 24 24" style="display:none"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 005.12 2.12M15 9.34V4a3 3 0 00-5.94-.6"/><path d="M17 16.95A7 7 0 015 10v-1m14 0v1a7 7 0 01-.11 1.23"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
+          <span>Mic</span>
+        </button>
+        <button class="pj-ctrl active" id="pj-cam-btn" title="Toggle camera">
+          <svg class="icon-cam-on" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          <svg class="icon-cam-off" viewBox="0 0 24 24" style="display:none"><line x1="1" y1="1" x2="23" y2="23"/><path d="M21 21H3a2 2 0 01-2-2V8a2 2 0 012-2h3m3-3h6l2 3h4a2 2 0 012 2v9.34"/><line x1="16" y1="11" x2="16" y2="11"/></svg>
+          <span>Camera</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="pj-info-col">
+      <div class="pj-class-info" id="pj-class-info">
+        <div class="pj-lang-badge" id="pj-lang-badge">ES</div>
+        <div class="pj-class-name" id="pj-class-name">Spanish Morning Session</div>
+        <div class="pj-teacher-row">
+          <div class="avatar-xs" id="pj-teacher-avatar" style="--hue:32">SM</div>
+          <span id="pj-teacher-name">Sofia Müller</span>
+          <span class="teacher-tag">Teacher</span>
+        </div>
+        <div class="pj-detail-row">
+          <span id="pj-topic">Conversational · Intermediate</span>
+        </div>
+        <div class="pj-detail-row">
+          <span id="pj-student-count">12 students in session</span>
+          <span class="pj-live-timer" id="pj-live-time">● 14:23</span>
+        </div>
+      </div>
+
+      <div class="pj-name-section">
+        <label class="pj-label">Your display name</label>
+        <input class="pj-name-input" id="pj-name-input" type="text" placeholder="How should we call you?" maxlength="32" value="You">
+      </div>
+
+      <button class="pj-join-btn" id="pj-join-btn">
+        <svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Join Class Now
+      </button>
+      <p class="pj-note">Your camera and microphone will be muted by default</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN 3: CLASSROOM ═══════════════════════════════ -->
+<div id="screen-classroom" class="screen">
+
+  <!-- TOP BAR -->
+  <div class="cr-topbar">
+    <div class="cr-topbar-l">
+      <div class="cr-logo">Talkora</div>
+      <div class="cr-divider"></div>
+      <div class="cr-class-title" id="cr-class-title">Spanish Morning Session</div>
+      <div class="cr-live-pill">● LIVE <span id="cr-timer">00:00</span></div>
+    </div>
+    <div class="cr-topbar-c">
+      <div class="cr-participant-count">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        <span id="cr-count">13</span>
+      </div>
+    </div>
+    <div class="cr-topbar-r">
+      <button class="cr-top-btn" id="cr-settings-btn" title="Settings">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </button>
+      <button class="cr-leave-btn" id="cr-leave-btn">Leave Class</button>
+    </div>
+  </div>
+
+  <!-- MAIN AREA -->
+  <div class="cr-main" id="cr-main">
+
+    <!-- VIDEO AREA -->
+    <div class="cr-video-area" id="cr-video-area">
+
+      <!-- TEACHER TILE (prominent) -->
+      <div class="video-tile teacher-tile" id="teacher-tile">
+        <div class="tile-video-bg">
+          <div class="tile-avatar teacher-avatar" style="--hue:32">SM</div>
+        </div>
+        <div class="tile-info">
+          <div class="tile-name">Sofia Müller</div>
+          <div class="tile-role">Teacher</div>
+        </div>
+        <div class="tile-speaking-ring" id="teacher-ring"></div>
+        <div class="tile-mic-icon">
+          <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0014 0"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
+        </div>
+        <div class="tile-fullscreen-btn" id="teacher-fullscreen">
+          <svg viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+        </div>
+        <div class="tile-screen-share" id="screen-share-content" style="display:none">
+          <div class="ss-content">
+            <div class="ss-header">
+              <div class="ss-dot r"></div><div class="ss-dot y"></div><div class="ss-dot g"></div>
+              <span class="ss-title">Lesson 3 — Past Tense in Spanish.pdf</span>
+            </div>
+            <div class="ss-body">
+              <div class="ss-slide">
+                <div class="ss-slide-title">El Pretérito Indefinido</div>
+                <div class="ss-slide-content">
+                  <div class="ss-item">Yo <em>hablé</em> — I spoke</div>
+                  <div class="ss-item">Tú <em>hablaste</em> — You spoke</div>
+                  <div class="ss-item">Él/ella <em>habló</em> — He/she spoke</div>
+                  <div class="ss-item">Nosotros <em>hablamos</em> — We spoke</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STUDENT GRID -->
+      <div class="student-grid" id="student-grid">
+        <!-- populated by JS -->
+      </div>
+
+    </div>
+
+    <!-- SIDEBAR (Chat / Participants) -->
+    <div class="cr-sidebar" id="cr-sidebar">
+      <div class="sidebar-tabs">
+        <button class="stab active" id="stab-chat" data-tab="chat">Chat</button>
+        <button class="stab" id="stab-people" data-tab="people">
+          People <span class="stab-count" id="people-count">13</span>
+        </button>
+      </div>
+
+      <!-- CHAT TAB -->
+      <div class="sidebar-content active" id="tab-chat">
+        <div class="chat-messages" id="cr-msgs"></div>
+        <div class="chat-input-wrap">
+          <input class="cr-chat-input" id="cr-chat-input" type="text" placeholder="Message the class…">
+          <button class="cr-send-btn" id="cr-send-btn">
+            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- PARTICIPANTS TAB -->
+      <div class="sidebar-content" id="tab-people">
+        <div class="people-list" id="people-list"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CONTROLS BAR -->
+  <div class="cr-controls">
+    <div class="controls-center">
+      <div class="ctrl-group">
+        <button class="ctrl-btn active" id="ctrl-mic">
+          <div class="ctrl-icon">
+            <svg class="icon-on" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0014 0"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
+            <svg class="icon-off" viewBox="0 0 24 24" style="display:none"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 005.12 2.12M15 9.34V4a3 3 0 00-5.94-.6"/><path d="M17 16.95A7 7 0 015 10v-1m14 0v1a7 7 0 01-.11 1.23"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
+          </div>
+          <span>Mic</span>
+        </button>
+        <button class="ctrl-btn active" id="ctrl-cam">
+          <div class="ctrl-icon">
+            <svg class="icon-on" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            <svg class="icon-off" viewBox="0 0 24 24" style="display:none"><line x1="1" y1="1" x2="23" y2="23"/><path d="M21 21H3a2 2 0 01-2-2V8a2 2 0 012-2h3m3-3h6l2 3h4a2 2 0 012 2v9.34"/><line x1="16" y1="11" x2="16" y2="11"/></svg>
+          </div>
+          <span>Camera</span>
+        </button>
+      </div>
+
+      <div class="ctrl-group">
+        <button class="ctrl-btn" id="ctrl-share">
+          <div class="ctrl-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <span>Share</span>
+        </button>
+        <button class="ctrl-btn" id="ctrl-hand">
+          <div class="ctrl-icon">
+            <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+          </div>
+          <span>Raise Hand</span>
+        </button>
+      </div>
+
+      <div class="ctrl-group">
+        <button class="ctrl-btn" id="ctrl-chat">
+          <div class="ctrl-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+          <span>Chat</span>
+        </button>
+        <button class="ctrl-btn" id="ctrl-people">
+          <div class="ctrl-icon">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <span>Participants</span>
+        </button>
+      </div>
+
+      <div class="ctrl-group">
+        <button class="ctrl-btn ctrl-danger" id="ctrl-leave">
+          <div class="ctrl-icon">
+            <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          </div>
+          <span>Leave</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HAND RAISED TOAST -->
+  <div class="hand-toast" id="hand-toast">✋ Your hand is raised</div>
+
+  <!-- NOTIFICATION TOAST -->
+  <div class="notif-toast" id="notif-toast"></div>
+
+</div>
+
+<script src="classroom.js"></script>
+</body>
+</html>
