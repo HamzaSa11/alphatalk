@@ -35,10 +35,14 @@
     </div>
     <div class="n-logo">Talkora</div>
     <div class="n-links">
-      <div class="n-link">Languages</div>
-      <div class="n-link">Method</div>
+      <div class="n-link" id="nav-languages">Languages</div>
+      <div class="n-link" id="nav-method">Method</div>
       <div class="n-link" id="nav-games">Play</div>
-      <div class="n-link">Join</div>
+      <div class="n-link" id="nav-join">Join</div>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
     </div>
   </nav>
 
@@ -52,7 +56,7 @@
     <div class="h-divider"></div>
     <div class="h-actions">
       <button class="btn-primary" id="start-btn">Begin Your Journey</button>
-      <button class="btn-ghost">Explore Method</button>
+      <button class="btn-ghost" id="method-btn">Explore Method</button>
     </div>
   </div>
 
@@ -246,6 +250,162 @@
       </div><!-- /game-arena -->
     </div><!-- /games-panel -->
   </div><!-- /games-overlay -->
+
+  <!-- LANGUAGES OVERLAY -->
+  <div id="lang-overlay" class="modal-overlay">
+    <div class="modal-panel" id="lang-panel">
+      <div class="modal-head">
+        <div class="modal-head-l">
+          <div class="modal-title">Languages</div>
+          <div class="modal-sub">Eight scripts · Eight worlds</div>
+        </div>
+        <button class="modal-close" id="lang-close">✕</button>
+      </div>
+      <div class="lang-grid">
+        <div class="lang-card" data-code="es">
+          <div class="lang-script">Hola</div>
+          <div class="lang-name">Spanish</div>
+          <div class="lang-native">Español</div>
+          <div class="lang-info">500M+ speakers · Latin script</div>
+        </div>
+        <div class="lang-card" data-code="fr">
+          <div class="lang-script">Bonjour</div>
+          <div class="lang-name">French</div>
+          <div class="lang-native">Français</div>
+          <div class="lang-info">280M+ speakers · Latin script</div>
+        </div>
+        <div class="lang-card" data-code="ja">
+          <div class="lang-script">こんにちは</div>
+          <div class="lang-name">Japanese</div>
+          <div class="lang-native">日本語</div>
+          <div class="lang-info">130M speakers · Kana + Kanji</div>
+        </div>
+        <div class="lang-card" data-code="ar">
+          <div class="lang-script">مرحبا</div>
+          <div class="lang-name">Arabic</div>
+          <div class="lang-native">العربية</div>
+          <div class="lang-info">420M speakers · Arabic script</div>
+        </div>
+        <div class="lang-card" data-code="de">
+          <div class="lang-script">Hallo</div>
+          <div class="lang-name">German</div>
+          <div class="lang-native">Deutsch</div>
+          <div class="lang-info">100M+ speakers · Latin script</div>
+        </div>
+        <div class="lang-card" data-code="it">
+          <div class="lang-script">Ciao</div>
+          <div class="lang-name">Italian</div>
+          <div class="lang-native">Italiano</div>
+          <div class="lang-info">85M speakers · Latin script</div>
+        </div>
+        <div class="lang-card" data-code="zh">
+          <div class="lang-script">你好</div>
+          <div class="lang-name">Mandarin</div>
+          <div class="lang-native">普通话</div>
+          <div class="lang-info">1B+ speakers · Hanzi script</div>
+        </div>
+        <div class="lang-card" data-code="gr">
+          <div class="lang-script">Γεια σου</div>
+          <div class="lang-name">Greek</div>
+          <div class="lang-native">Ελληνικά</div>
+          <div class="lang-info">13M speakers · Greek alphabet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- METHOD OVERLAY -->
+  <div id="method-overlay" class="modal-overlay">
+    <div class="modal-panel" id="method-panel">
+      <div class="modal-head">
+        <div class="modal-head-l">
+          <div class="modal-title">The Method</div>
+          <div class="modal-sub">Language woven into every moment</div>
+        </div>
+        <button class="modal-close" id="method-close">✕</button>
+      </div>
+      <div class="method-body">
+        <div class="method-step">
+          <div class="method-num">I</div>
+          <div class="method-content">
+            <div class="method-step-title">Morning Immersion</div>
+            <p class="method-step-body">Begin each day in your chosen language. Label your coffee cup, narrate your commute, read one sentence of news in translation. The morning mind is receptive — use it.</p>
+          </div>
+        </div>
+        <div class="method-step">
+          <div class="method-num">II</div>
+          <div class="method-content">
+            <div class="method-step-title">Micro-Practice Throughout the Day</div>
+            <p class="method-step-body">Five minutes between meetings. A word flash during lunch. A phrase typed while waiting. Language learning thrives not in marathon sessions but in the countless crevices of daily life.</p>
+          </div>
+        </div>
+        <div class="method-step">
+          <div class="method-num">III</div>
+          <div class="method-content">
+            <div class="method-step-title">Cultural Anchoring</div>
+            <p class="method-step-body">Words without culture are hollow. Every lesson is anchored to a place, a tradition, a way of seeing. When you learn <em>mariposa</em>, you learn the poetry of the Spanish imagination.</p>
+          </div>
+        </div>
+        <div class="method-step">
+          <div class="method-num">IV</div>
+          <div class="method-content">
+            <div class="method-step-title">Evening Reflection</div>
+            <p class="method-step-body">Wind down with your target language. A film, a song, a conversation with the assistant. Sleep consolidates memory — what you learn at dusk, you wake with at dawn.</p>
+          </div>
+        </div>
+        <div class="method-cta">
+          <button class="btn-primary" id="method-start-btn">Begin Your Journey</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JOIN OVERLAY -->
+  <div id="join-overlay" class="modal-overlay">
+    <div class="modal-panel modal-panel--narrow" id="join-panel">
+      <div class="modal-head">
+        <div class="modal-head-l">
+          <div class="modal-title">Join Talkora</div>
+          <div class="modal-sub">Your journey begins here</div>
+        </div>
+        <button class="modal-close" id="join-close">✕</button>
+      </div>
+      <div class="join-body" id="join-body">
+        <p class="join-intro">Become part of a community of 3.1 million learners who have made language a way of life.</p>
+        <div class="join-form" id="join-form">
+          <div class="form-field">
+            <label class="form-label">Your Name</label>
+            <input class="form-input" id="join-name" type="text" placeholder="How shall we address you?">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Email Address</label>
+            <input class="form-input" id="join-email" type="email" placeholder="your@email.com">
+          </div>
+          <div class="form-field">
+            <label class="form-label">First Language to Learn</label>
+            <select class="form-input form-select" id="join-lang">
+              <option value="">Choose a language…</option>
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+              <option value="ja">Japanese</option>
+              <option value="ar">Arabic</option>
+              <option value="de">German</option>
+              <option value="it">Italian</option>
+              <option value="zh">Mandarin</option>
+              <option value="gr">Greek</option>
+            </select>
+          </div>
+          <button class="btn-primary join-submit" id="join-submit">Begin the Journey</button>
+          <div class="join-error" id="join-error"></div>
+        </div>
+        <div class="join-success" id="join-success" style="display:none">
+          <div class="success-icon">✦</div>
+          <div class="success-title">Welcome to Talkora</div>
+          <p class="success-body">Your journey has begun. Watch for a message from us — your first lesson awaits.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </div><!-- /shell -->
 

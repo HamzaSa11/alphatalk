@@ -724,3 +724,152 @@ glyphStartBtn.addEventListener('click',()=>{
   glyphStartBtn.style.display='none';
   glyphLoad();
 });
+
+/* ═══════════════════════════════════════════════════
+   THEME TOGGLE
+═══════════════════════════════════════════════════ */
+const DARK_COLORS = {
+  orb:        0x0c0b09,
+  orbEmissive:0x3d2500,
+  ring:       0xb8935a,
+  wire:       0xb8935a,
+  ico:        0xb8935a,
+  particle:   0xb8935a,
+  sprite:     '#b8935a',
+  ambientLight: 0x100a04,
+  l1:         0xe8b86d,
+  l2:         0xb8935a,
+  l3:         0x0d1a2a,
+  fogColor:   0x0a0906,
+};
+const LIGHT_COLORS = {
+  orb:        0xdce8ff,
+  orbEmissive:0x3355aa,
+  ring:       0x4361ee,
+  wire:       0x4361ee,
+  ico:        0x4361ee,
+  particle:   0x4361ee,
+  sprite:     '#4361ee',
+  ambientLight: 0xc8d4ff,
+  l1:         0x738bff,
+  l2:         0x4361ee,
+  l3:         0xaabbff,
+  fogColor:   0xd0daff,
+};
+
+let isLight = false;
+
+function applyThemeColors(colors){
+  orbMat.color.setHex(colors.orb);
+  orbMat.emissive.setHex(colors.orbEmissive);
+  [ring1,ring2,ring3].forEach(r => r.material.color.setHex(colors.ring));
+  wMat.color.setHex(colors.wire);
+  icoMat.color.setHex(colors.ico);
+  pMat.color.setHex(colors.particle);
+  l1.color.setHex(colors.l1);
+  l2.color.setHex(colors.l2);
+  l3.color.setHex(colors.l3);
+  scene.getObjectByProperty('type','AmbientLight').color.setHex(colors.ambientLight);
+  scene.fog.color.setHex(colors.fogColor);
+  spriteGroup.forEach(sp => {
+    const cv = document.createElement('canvas');
+    cv.width=256; cv.height=128;
+    const cx=cv.getContext('2d');
+    cx.font=`70px 'Libre Baskerville', serif`;
+    cx.fillStyle=colors.sprite; cx.globalAlpha=.55;
+    cx.textAlign='center'; cx.textBaseline='middle';
+    cx.fillText(sp.userData.txt||'',128,68);
+    sp.material.map = new THREE.CanvasTexture(cv);
+    sp.material.map.needsUpdate = true;
+  });
+}
+
+// Store text on each sprite for recoloring
+spriteGroup.forEach((sp,i) => { sp.userData.txt = glyphs[i]||''; });
+
+document.getElementById('theme-toggle').addEventListener('click',()=>{
+  isLight = !isLight;
+  document.documentElement.classList.toggle('light', isLight);
+  applyThemeColors(isLight ? LIGHT_COLORS : DARK_COLORS);
+  renderer.setClearColor(isLight ? 0xd0daff : 0x000000, 0);
+  scene.fog = new THREE.FogExp2(isLight ? 0xd0daff : 0x0a0906, 0.028);
+});
+
+/* ═══════════════════════════════════════════════════
+   NAV — LANGUAGES MODAL
+═══════════════════════════════════════════════════ */
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+document.getElementById('nav-languages').addEventListener('click', ()=> openModal('lang-overlay'));
+document.getElementById('lang-close').addEventListener('click', ()=> closeModal('lang-overlay'));
+document.getElementById('lang-overlay').addEventListener('click', e=>{
+  if(e.target === document.getElementById('lang-overlay')) closeModal('lang-overlay');
+});
+
+// Language card click — set language in all games and open games panel
+document.querySelectorAll('.lang-card').forEach(card => {
+  card.addEventListener('click', ()=>{
+    const code = card.dataset.code;
+    closeModal('lang-overlay');
+    // Set language selectors if the code is available
+    const racerSel = document.getElementById('racer-lang');
+    const flashSel = document.getElementById('flash-lang');
+    if([...racerSel.options].some(o=>o.value===code)) racerSel.value = code;
+    if([...flashSel.options].some(o=>o.value===code)) flashSel.value = code;
+    racerLoadPhrase();
+    openModal('games-overlay');
+    gamesOverlay.classList.add('open');
+  });
+});
+
+/* ═══════════════════════════════════════════════════
+   NAV — METHOD MODAL
+═══════════════════════════════════════════════════ */
+document.getElementById('nav-method').addEventListener('click', ()=> openModal('method-overlay'));
+document.getElementById('method-close').addEventListener('click', ()=> closeModal('method-overlay'));
+document.getElementById('method-overlay').addEventListener('click', e=>{
+  if(e.target === document.getElementById('method-overlay')) closeModal('method-overlay');
+});
+// Hero ghost button
+document.getElementById('method-btn').addEventListener('click', ()=> openModal('method-overlay'));
+// CTA inside method panel
+document.getElementById('method-start-btn').addEventListener('click',()=>{
+  closeModal('method-overlay');
+  chatPanel.classList.add('open');
+  chatBtn.style.opacity='.4';
+  input.focus();
+  if(history.length===0){
+    input.value="I'd like to know more about the Talkora method for daily language learning.";
+  }
+});
+
+/* ═══════════════════════════════════════════════════
+   NAV — JOIN MODAL
+═══════════════════════════════════════════════════ */
+document.getElementById('nav-join').addEventListener('click', ()=> openModal('join-overlay'));
+document.getElementById('join-close').addEventListener('click', ()=> closeModal('join-overlay'));
+document.getElementById('join-overlay').addEventListener('click', e=>{
+  if(e.target === document.getElementById('join-overlay')) closeModal('join-overlay');
+});
+
+document.getElementById('join-submit').addEventListener('click', ()=>{
+  const name  = document.getElementById('join-name').value.trim();
+  const email = document.getElementById('join-email').value.trim();
+  const lang  = document.getElementById('join-lang').value;
+  const err   = document.getElementById('join-error');
+
+  if(!name){ err.textContent='Please enter your name.'; return; }
+  if(!email || !email.includes('@')){ err.textContent='Please enter a valid email address.'; return; }
+  if(!lang){ err.textContent='Please choose a language to begin.'; return; }
+
+  err.textContent='';
+  document.getElementById('join-form').style.display='none';
+  document.getElementById('join-success').style.display='flex';
+});
+
+/* Register new interactive elements with cursor hover */
+document.querySelectorAll('.modal-close,.theme-toggle,.lang-card,.method-step,.join-submit,.n-link').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
+});
