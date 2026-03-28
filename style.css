@@ -150,6 +150,7 @@ body.hovering #cur-r { width:48px; height:48px; border-color:rgba(184,147,90,0.5
   animation:livePulse 1.8s ease-in-out infinite;
 }
 .n-link-live::after { background:linear-gradient(to right, transparent, #e74c3c, transparent) !important; }
+.n-link-teacher { text-decoration:none; }
 @keyframes livePulse { 0%,100%{opacity:1} 50%{opacity:.55} }
 .n-link::after {
   content:''; position:absolute; bottom:-3px; left:0; right:0; height:1px;

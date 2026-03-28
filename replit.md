@@ -16,6 +16,9 @@ Talkora is an immersive language learning web app featuring a 3D interactive bac
 - `classroom.html` — Live classroom page (lobby, pre-join, and classroom views)
 - `classroom.css` — Classroom-specific styles (Zoom-like UI in Talkora aesthetic)
 - `classroom.js` — Classroom logic (screen transitions, simulated participants, chat, controls)
+- `teacher.html` — Teacher portal (login gate + 5-section dashboard)
+- `teacher.css` — Teacher portal styles (sidebar dashboard layout)
+- `teacher.js` — Teacher portal logic (classes, students, lessons, analytics)
 - `talkora.html` — Self-contained single-file version
 - `server.js` — Simple static file server for Replit
 

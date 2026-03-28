@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TALKORA — Teacher Portal</title>
+  <link rel="stylesheet" href="teacher.css">
+</head>
+<body>
+
+<!-- ══ LOGIN GATE ════════════════════════════════════════════ -->
+<div id="gate" class="gate active">
+  <div class="gate-bg"></div>
+  <div class="gate-card">
+    <div class="gate-logo">Talkora</div>
+    <div class="gate-sub">Teacher Portal</div>
+    <div class="gate-divider"></div>
+    <h2 class="gate-title">Welcome back,<br><em>educator.</em></h2>
+    <p class="gate-note">Demo access · No credentials required</p>
+    <div class="gate-fields">
+      <div class="gate-field">
+        <label class="gate-label">Your name</label>
+        <input class="gate-input" id="gate-name" type="text" placeholder="Sofia Müller" value="Sofia Müller">
+      </div>
+      <div class="gate-field">
+        <label class="gate-label">Teaching language</label>
+        <select class="gate-input gate-select" id="gate-lang">
+          <option value="Spanish">Spanish (ES)</option>
+          <option value="French">French (FR)</option>
+          <option value="Japanese">Japanese (JA)</option>
+          <option value="Arabic">Arabic (AR)</option>
+          <option value="German">German (DE)</option>
+          <option value="Italian">Italian (IT)</option>
+        </select>
+      </div>
+    </div>
+    <button class="gate-btn" id="gate-enter">Enter Teacher Portal →</button>
+    <a class="gate-back" href="/">← Back to Talkora</a>
+  </div>
+</div>
+
+<!-- ══ TEACHER APP ══════════════════════════════════════════ -->
+<div id="app" class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-mark">T</div>
+        <div>
+          <div class="sidebar-logo-name">Talkora</div>
+          <div class="sidebar-logo-sub">Teacher Portal</div>
+        </div>
+      </div>
+      <button class="sidebar-collapse" id="sidebar-collapse" title="Collapse sidebar">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="snav-item active" data-section="dashboard">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span>Dashboard</span>
+      </button>
+      <button class="snav-item" data-section="classes">
+        <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+        <span>Classes</span>
+        <span class="snav-badge">6</span>
+      </button>
+      <button class="snav-item" data-section="students">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        <span>Students</span>
+        <span class="snav-badge">48</span>
+      </button>
+      <button class="snav-item" data-section="lessons">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <span>Lessons</span>
+      </button>
+      <button class="snav-item" data-section="analytics">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+        <span>Analytics</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button class="go-live-btn" id="go-live-btn">
+        <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Launch Live Class
+      </button>
+      <div class="teacher-profile" id="teacher-profile">
+        <div class="teacher-avatar-sm" id="teacher-avatar-sm">SM</div>
+        <div class="teacher-profile-info">
+          <div class="teacher-profile-name" id="teacher-profile-name">Sofia Müller</div>
+          <div class="teacher-profile-role" id="teacher-profile-role">Spanish Teacher</div>
+        </div>
+        <button class="logout-btn" id="logout-btn" title="Log out">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content" id="main-content">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <button class="topbar-menu" id="topbar-menu">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="topbar-breadcrumb" id="topbar-breadcrumb">Dashboard</div>
+      <div class="topbar-right">
+        <div class="topbar-time" id="topbar-clock"></div>
+        <div class="notif-btn" id="notif-btn">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="topbar-avatar" id="topbar-avatar">SM</div>
+      </div>
+    </div>
+
+    <!-- ── SECTION: DASHBOARD ───────────────────────────── -->
+    <section class="content-section active" id="section-dashboard">
+      <div class="section-header">
+        <div>
+          <div class="section-greeting" id="dash-greeting">Good morning,</div>
+          <h1 class="section-title" id="dash-name">Sofia.</h1>
+        </div>
+        <div class="section-date" id="dash-date"></div>
+      </div>
+
+      <!-- STAT CARDS -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-card-icon" style="--hue:32">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div class="stat-card-body">
+            <div class="stat-card-val">48</div>
+            <div class="stat-card-label">Active Students</div>
+          </div>
+          <div class="stat-card-trend up">+3 this week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon" style="--hue:210">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="stat-card-body">
+            <div class="stat-card-val">6</div>
+            <div class="stat-card-label">Sessions This Week</div>
+          </div>
+          <div class="stat-card-trend up">2 remaining</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon" style="--hue:160">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="stat-card-body">
+            <div class="stat-card-val">24.5h</div>
+            <div class="stat-card-label">Hours Taught</div>
+          </div>
+          <div class="stat-card-trend up">+3h vs last week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon" style="--hue:45">
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div class="stat-card-body">
+            <div class="stat-card-val">73%</div>
+            <div class="stat-card-label">Avg. Progress</div>
+          </div>
+          <div class="stat-card-trend up">+5% this month</div>
+        </div>
+      </div>
+
+      <!-- TWO COL -->
+      <div class="dash-two-col">
+
+        <!-- TODAY'S SCHEDULE -->
+        <div class="dash-card">
+          <div class="dash-card-head">
+            <div class="dash-card-title">Today's Schedule</div>
+            <button class="dash-card-action" data-section="classes">View All →</button>
+          </div>
+          <div class="schedule-list">
+            <div class="sched-item live">
+              <div class="sched-time">09:00</div>
+              <div class="sched-bar"></div>
+              <div class="sched-body">
+                <div class="sched-name">Spanish Morning Session <span class="live-chip">● LIVE</span></div>
+                <div class="sched-meta">12 students · Intermediate · 45 min remaining</div>
+              </div>
+              <button class="sched-action live-action" onclick="window.location.href='/classroom.html'">Join →</button>
+            </div>
+            <div class="sched-item upcoming">
+              <div class="sched-time">14:00</div>
+              <div class="sched-bar"></div>
+              <div class="sched-body">
+                <div class="sched-name">Advanced Grammar Workshop</div>
+                <div class="sched-meta">8 students · Advanced · in 4h 37m</div>
+              </div>
+              <button class="sched-action">Prepare</button>
+            </div>
+            <div class="sched-item upcoming">
+              <div class="sched-time">18:00</div>
+              <div class="sched-bar"></div>
+              <div class="sched-body">
+                <div class="sched-name">Spanish Evening — Conversation</div>
+                <div class="sched-meta">15 students · Intermediate · in 8h 37m</div>
+              </div>
+              <button class="sched-action">Prepare</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECENT ACTIVITY -->
+        <div class="dash-card">
+          <div class="dash-card-head">
+            <div class="dash-card-title">Recent Student Activity</div>
+            <button class="dash-card-action" data-section="students">View All →</button>
+          </div>
+          <div class="activity-list" id="activity-list">
+            <div class="activity-item">
+              <div class="act-avatar" style="--hue:200">AK</div>
+              <div class="act-body">
+                <div class="act-name">Alex Kim <span class="act-action">completed Lesson 4</span></div>
+                <div class="act-time">2 minutes ago</div>
+              </div>
+              <div class="act-score good">+28 XP</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-avatar" style="--hue:330">MG</div>
+              <div class="act-body">
+                <div class="act-name">Maria Garcia <span class="act-action">joined morning class</span></div>
+                <div class="act-time">14 minutes ago</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="act-avatar" style="--hue:280">YT</div>
+              <div class="act-body">
+                <div class="act-name">Yuki Tanaka <span class="act-action">achieved 21-day streak 🔥</span></div>
+                <div class="act-time">1 hour ago</div>
+              </div>
+              <div class="act-score great">Milestone</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-avatar" style="--hue:0">CR</div>
+              <div class="act-body">
+                <div class="act-name">Carlos Reyes <span class="act-action">scored 94% on verb quiz</span></div>
+                <div class="act-time">2 hours ago</div>
+              </div>
+              <div class="act-score good">94%</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-avatar" style="--hue:160">HA</div>
+              <div class="act-body">
+                <div class="act-name">Hassan A. <span class="act-action">submitted essay draft</span></div>
+                <div class="act-time">3 hours ago</div>
+              </div>
+              <div class="act-score pending">Review</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-avatar" style="--hue:45">EW</div>
+              <div class="act-body">
+                <div class="act-name">Emma Walker <span class="act-action">started Word Flash game</span></div>
+                <div class="act-time">4 hours ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <div class="quick-actions">
+        <div class="qa-label">Quick Actions</div>
+        <div class="qa-row">
+          <button class="qa-btn primary" id="qa-live">
+            <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Start Live Class
+          </button>
+          <button class="qa-btn" data-section="lessons">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Lesson Plan
+          </button>
+          <button class="qa-btn" data-section="students">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            Message Students
+          </button>
+          <button class="qa-btn" data-section="analytics">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+            View Analytics
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION: CLASSES ─────────────────────────────── -->
+    <section class="content-section" id="section-classes">
+      <div class="section-header">
+        <div>
+          <div class="section-eyebrow">Manage</div>
+          <h1 class="section-title">My <em>Classes</em></h1>
+        </div>
+        <button class="btn-primary-sm" id="new-class-btn">+ New Class</button>
+      </div>
+
+      <div class="filter-bar">
+        <div class="filter-tabs">
+          <button class="ftab active" data-filter="all">All <span class="ftab-c">6</span></button>
+          <button class="ftab" data-filter="live">Live <span class="ftab-c">1</span></button>
+          <button class="ftab" data-filter="scheduled">Scheduled <span class="ftab-c">4</span></button>
+          <button class="ftab" data-filter="draft">Draft <span class="ftab-c">1</span></button>
+        </div>
+      </div>
+
+      <div class="classes-list" id="classes-list">
+        <!-- populated by JS -->
+      </div>
+
+      <!-- NEW CLASS MODAL -->
+      <div class="modal-overlay" id="new-class-modal">
+        <div class="modal-box">
+          <div class="modal-box-head">
+            <div class="modal-box-title">Create New Class</div>
+            <button class="modal-box-close" data-close="new-class-modal">✕</button>
+          </div>
+          <div class="modal-form">
+            <div class="mform-row">
+              <div class="mform-field">
+                <label class="mform-label">Class Name</label>
+                <input class="mform-input" id="nc-name" type="text" placeholder="e.g. Spanish Beginners">
+              </div>
+              <div class="mform-field">
+                <label class="mform-label">Language</label>
+                <select class="mform-input mform-select" id="nc-lang">
+                  <option>Spanish</option><option>French</option><option>Japanese</option>
+                  <option>Arabic</option><option>German</option><option>Italian</option>
+                </select>
+              </div>
+            </div>
+            <div class="mform-row">
+              <div class="mform-field">
+                <label class="mform-label">Level</label>
+                <select class="mform-input mform-select" id="nc-level">
+                  <option>Beginner</option><option>Intermediate</option><option>Advanced</option>
+                </select>
+              </div>
+              <div class="mform-field">
+                <label class="mform-label">Max Students</label>
+                <input class="mform-input" id="nc-max" type="number" placeholder="20" min="1" max="100">
+              </div>
+            </div>
+            <div class="mform-field">
+              <label class="mform-label">Description</label>
+              <textarea class="mform-input mform-textarea" id="nc-desc" placeholder="What will students learn in this class?"></textarea>
+            </div>
+            <div class="mform-row">
+              <div class="mform-field">
+                <label class="mform-label">Schedule</label>
+                <input class="mform-input" id="nc-schedule" type="text" placeholder="e.g. Mon/Wed/Fri 09:00">
+              </div>
+              <div class="mform-field">
+                <label class="mform-label">Duration (minutes)</label>
+                <input class="mform-input" id="nc-duration" type="number" placeholder="60">
+              </div>
+            </div>
+            <div class="mform-actions">
+              <button class="mform-cancel" data-close="new-class-modal">Cancel</button>
+              <button class="mform-submit" id="nc-submit">Create Class</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION: STUDENTS ────────────────────────────── -->
+    <section class="content-section" id="section-students">
+      <div class="section-header">
+        <div>
+          <div class="section-eyebrow">Roster</div>
+          <h1 class="section-title">My <em>Students</em></h1>
+        </div>
+        <div class="students-search-wrap">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="students-search" id="students-search" type="text" placeholder="Search students…">
+        </div>
+      </div>
+
+      <div class="students-filters">
+        <select class="stu-filter-sel" id="stu-lang-filter">
+          <option value="">All Languages</option>
+          <option>Spanish</option><option>French</option><option>Japanese</option><option>Arabic</option>
+        </select>
+        <select class="stu-filter-sel" id="stu-level-filter">
+          <option value="">All Levels</option>
+          <option>Beginner</option><option>Intermediate</option><option>Advanced</option>
+        </select>
+        <select class="stu-filter-sel" id="stu-sort">
+          <option value="name">Sort: Name</option>
+          <option value="progress">Sort: Progress</option>
+          <option value="streak">Sort: Streak</option>
+          <option value="active">Sort: Last Active</option>
+        </select>
+      </div>
+
+      <div class="students-table-wrap">
+        <table class="students-table" id="students-table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Language</th>
+              <th>Level</th>
+              <th>Streak</th>
+              <th>Last Active</th>
+              <th>Progress</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="students-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- STUDENT DETAIL PANEL -->
+      <div class="student-detail-panel" id="student-detail">
+        <div class="sdp-head">
+          <button class="sdp-close" id="sdp-close">✕</button>
+          <div class="sdp-avatar" id="sdp-avatar" style="--hue:200">AK</div>
+          <div class="sdp-name" id="sdp-name">Alex Kim</div>
+          <div class="sdp-role" id="sdp-role">Spanish · Intermediate</div>
+        </div>
+        <div class="sdp-stats">
+          <div class="sdp-stat">
+            <div class="sdp-stat-val" id="sdp-streak">14</div>
+            <div class="sdp-stat-label">Day Streak 🔥</div>
+          </div>
+          <div class="sdp-stat">
+            <div class="sdp-stat-val" id="sdp-lessons">23</div>
+            <div class="sdp-stat-label">Lessons Done</div>
+          </div>
+          <div class="sdp-stat">
+            <div class="sdp-stat-val" id="sdp-xp">1,840</div>
+            <div class="sdp-stat-label">Total XP</div>
+          </div>
+        </div>
+        <div class="sdp-progress-section">
+          <div class="sdp-section-title">Skill Progress</div>
+          <div class="sdp-skills" id="sdp-skills"></div>
+        </div>
+        <div class="sdp-notes-section">
+          <div class="sdp-section-title">Teacher Notes</div>
+          <textarea class="sdp-notes" id="sdp-notes" placeholder="Add private notes about this student…"></textarea>
+          <button class="sdp-save-notes">Save Notes</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION: LESSONS ─────────────────────────────── -->
+    <section class="content-section" id="section-lessons">
+      <div class="section-header">
+        <div>
+          <div class="section-eyebrow">Library</div>
+          <h1 class="section-title">Lesson <em>Plans</em></h1>
+        </div>
+        <button class="btn-primary-sm" id="new-lesson-btn">+ New Lesson</button>
+      </div>
+
+      <div class="lessons-layout">
+        <!-- LESSON LIST -->
+        <div class="lesson-list" id="lesson-list">
+          <!-- populated by JS -->
+        </div>
+
+        <!-- LESSON EDITOR -->
+        <div class="lesson-editor" id="lesson-editor">
+          <div class="le-placeholder" id="le-placeholder">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <p>Select a lesson to edit,<br>or create a new one</p>
+          </div>
+          <div class="le-form" id="le-form" style="display:none">
+            <div class="le-form-head">
+              <input class="le-title-input" id="le-title" placeholder="Lesson title…" type="text">
+              <div class="le-form-actions">
+                <button class="le-btn-secondary" id="le-delete-btn">Delete</button>
+                <button class="le-btn-draft" id="le-draft-btn">Save Draft</button>
+                <button class="le-btn-publish" id="le-publish-btn">Publish</button>
+              </div>
+            </div>
+            <div class="le-meta-row">
+              <select class="le-select" id="le-lang">
+                <option>Spanish</option><option>French</option><option>Japanese</option>
+                <option>Arabic</option><option>German</option><option>Italian</option>
+              </select>
+              <select class="le-select" id="le-level">
+                <option>Beginner</option><option>Intermediate</option><option>Advanced</option>
+              </select>
+              <input class="le-meta-input" id="le-duration-edit" type="text" placeholder="Duration (e.g. 45 min)">
+            </div>
+            <div class="le-section">
+              <div class="le-section-title">Learning Objectives</div>
+              <textarea class="le-textarea" id="le-objectives" placeholder="What will students achieve by the end of this lesson?"></textarea>
+            </div>
+            <div class="le-section">
+              <div class="le-section-head">
+                <div class="le-section-title">Vocabulary</div>
+                <button class="le-add-btn" id="add-vocab-btn">+ Add Word</button>
+              </div>
+              <div class="vocab-list" id="vocab-list"></div>
+            </div>
+            <div class="le-section">
+              <div class="le-section-head">
+                <div class="le-section-title">Exercises</div>
+                <button class="le-add-btn" id="add-exercise-btn">+ Add Exercise</button>
+              </div>
+              <div class="exercise-list" id="exercise-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION: ANALYTICS ───────────────────────────── -->
+    <section class="content-section" id="section-analytics">
+      <div class="section-header">
+        <div>
+          <div class="section-eyebrow">Insights</div>
+          <h1 class="section-title">Student <em>Analytics</em></h1>
+        </div>
+        <div class="period-tabs">
+          <button class="period-tab active" data-period="week">This Week</button>
+          <button class="period-tab" data-period="month">This Month</button>
+          <button class="period-tab" data-period="all">All Time</button>
+        </div>
+      </div>
+
+      <!-- BIG NUMBERS -->
+      <div class="analytics-bigs">
+        <div class="big-stat">
+          <div class="big-val">24</div>
+          <div class="big-label">Sessions Taught</div>
+          <div class="big-sub">+3 vs last week</div>
+        </div>
+        <div class="big-stat">
+          <div class="big-val">48</div>
+          <div class="big-label">Students Reached</div>
+          <div class="big-sub">+3 new this week</div>
+        </div>
+        <div class="big-stat">
+          <div class="big-val">52m</div>
+          <div class="big-label">Avg. Session</div>
+          <div class="big-sub">+4m vs last week</div>
+        </div>
+        <div class="big-stat">
+          <div class="big-val">91%</div>
+          <div class="big-label">Attendance Rate</div>
+          <div class="big-sub">↑ 4% this week</div>
+        </div>
+      </div>
+
+      <!-- CHARTS ROW -->
+      <div class="analytics-charts">
+        <div class="chart-card" style="flex:2">
+          <div class="chart-title">Weekly Sessions — This Month</div>
+          <div class="bar-chart" id="weekly-chart">
+            <div class="bar-col"><div class="bar-fill" style="height:55%"></div><div class="bar-label">Mon</div></div>
+            <div class="bar-col"><div class="bar-fill" style="height:80%"></div><div class="bar-label">Tue</div></div>
+            <div class="bar-col"><div class="bar-fill" style="height:40%"></div><div class="bar-label">Wed</div></div>
+            <div class="bar-col"><div class="bar-fill active" style="height:95%"></div><div class="bar-label">Thu</div></div>
+            <div class="bar-col"><div class="bar-fill" style="height:65%"></div><div class="bar-label">Fri</div></div>
+            <div class="bar-col"><div class="bar-fill dim" style="height:20%"></div><div class="bar-label">Sat</div></div>
+            <div class="bar-col"><div class="bar-fill dim" style="height:10%"></div><div class="bar-label">Sun</div></div>
+          </div>
+        </div>
+
+        <div class="chart-card" style="flex:1">
+          <div class="chart-title">Language Distribution</div>
+          <div class="lang-dist">
+            <div class="lang-dist-row">
+              <div class="lang-dist-label">Spanish</div>
+              <div class="lang-dist-track"><div class="lang-dist-fill" style="width:58%"></div></div>
+              <div class="lang-dist-pct">58%</div>
+            </div>
+            <div class="lang-dist-row">
+              <div class="lang-dist-label">French</div>
+              <div class="lang-dist-track"><div class="lang-dist-fill" style="width:22%"></div></div>
+              <div class="lang-dist-pct">22%</div>
+            </div>
+            <div class="lang-dist-row">
+              <div class="lang-dist-label">Japanese</div>
+              <div class="lang-dist-track"><div class="lang-dist-fill" style="width:12%"></div></div>
+              <div class="lang-dist-pct">12%</div>
+            </div>
+            <div class="lang-dist-row">
+              <div class="lang-dist-label">Arabic</div>
+              <div class="lang-dist-track"><div class="lang-dist-fill" style="width:8%"></div></div>
+              <div class="lang-dist-pct">8%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEADERBOARD + RETENTION -->
+      <div class="analytics-bottom">
+        <div class="chart-card" style="flex:1">
+          <div class="chart-title">Top Students This Week</div>
+          <div class="leaderboard">
+            <div class="lb-row">
+              <div class="lb-rank">1</div>
+              <div class="act-avatar" style="--hue:280">YT</div>
+              <div class="lb-name">Yuki Tanaka</div>
+              <div class="lb-xp">2,840 XP</div>
+              <div class="lb-badge gold">🏆</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-rank">2</div>
+              <div class="act-avatar" style="--hue:200">AK</div>
+              <div class="lb-name">Alex Kim</div>
+              <div class="lb-xp">1,840 XP</div>
+              <div class="lb-badge silver">🥈</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-rank">3</div>
+              <div class="act-avatar" style="--hue:0">CR</div>
+              <div class="lb-name">Carlos Reyes</div>
+              <div class="lb-xp">1,620 XP</div>
+              <div class="lb-badge bronze">🥉</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-rank">4</div>
+              <div class="act-avatar" style="--hue:330">MG</div>
+              <div class="lb-name">Maria Garcia</div>
+              <div class="lb-xp">1,430 XP</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-rank">5</div>
+              <div class="act-avatar" style="--hue:45">EW</div>
+              <div class="lb-name">Emma Walker</div>
+              <div class="lb-xp">1,210 XP</div>
+            </div>
+          </div>
+        </div>
+        <div class="chart-card" style="flex:1">
+          <div class="chart-title">Skill Retention Rates</div>
+          <div class="retention-list">
+            <div class="ret-row">
+              <div class="ret-skill">Vocabulary</div>
+              <div class="ret-track"><div class="ret-fill" style="width:82%"></div></div>
+              <div class="ret-pct">82%</div>
+            </div>
+            <div class="ret-row">
+              <div class="ret-skill">Grammar</div>
+              <div class="ret-track"><div class="ret-fill" style="width:74%"></div></div>
+              <div class="ret-pct">74%</div>
+            </div>
+            <div class="ret-row">
+              <div class="ret-skill">Listening</div>
+              <div class="ret-track"><div class="ret-fill" style="width:68%"></div></div>
+              <div class="ret-pct">68%</div>
+            </div>
+            <div class="ret-row">
+              <div class="ret-skill">Speaking</div>
+              <div class="ret-track"><div class="ret-fill" style="width:61%"></div></div>
+              <div class="ret-pct">61%</div>
+            </div>
+            <div class="ret-row">
+              <div class="ret-skill">Reading</div>
+              <div class="ret-track"><div class="ret-fill" style="width:88%"></div></div>
+              <div class="ret-pct">88%</div>
+            </div>
+            <div class="ret-row">
+              <div class="ret-skill">Writing</div>
+              <div class="ret-track"><div class="ret-fill" style="width:55%"></div></div>
+              <div class="ret-pct">55%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="teacher.js"></script>
+</body>
+</html>
